@@ -13,7 +13,7 @@ function Label(props: { id: string; title: string }) {
   return (
     <label
       htmlFor={props.id}
-      className="block font-medium leading-6 text-gray-400 mb-2"
+      className="block font-medium leading-6 text-blue-500 mb-2"
     >
       {props.title}
     </label>

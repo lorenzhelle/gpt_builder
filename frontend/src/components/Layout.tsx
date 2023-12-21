@@ -101,15 +101,15 @@ export function Layout(props: {
         <div className="flex-1 text-sm font-semibold leading-6 text-gray-900 lg:pl-72">
           {props.subtitle ? (
             <>
-              OpenGPTs: <span className="font-normal">{props.subtitle}</span>
+              Kirchner Robert GPT:{" "}
+              <span className="font-normal">{props.subtitle}</span>
             </>
           ) : (
-            "OpenGPTs"
+            "Kirchner Robert GPT"
           )}
         </div>
         <div className="inline-flex items-center rounded-md bg-pink-100 px-2 py-1 text-xs font-medium text-pink-700">
-          Research Preview: this is unauthenticated and all data can be found.
-          Do not use with sensitive data
+          This is a prototype version. Don't use with sensitive data.
         </div>
       </div>
 

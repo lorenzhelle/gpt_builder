@@ -132,11 +132,12 @@ export function Message(props: MessageType & { runId?: string }) {
           )}
         </div>
       </div>
-      {props.runId && (
+      {/* // TODO remove feedback for now */}
+      {/* {props.runId && (
         <div className="mt-2 pl-[100px]">
           <LangSmithActions runId={props.runId} />
         </div>
-      )}
+      )} */}
     </div>
   );
 }
