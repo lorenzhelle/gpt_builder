@@ -110,16 +110,17 @@ class AvailableTools(str, Enum):
     WIKIPEDIA = "Wikipedia"
 
 
+# uncomment not used tools
 TOOLS = {
     AvailableTools.DDG_SEARCH: _get_duck_duck_go,
     AvailableTools.ARXIV: _get_arxiv,
-    AvailableTools.YOU_SEARCH: _get_you_search,
+    # AvailableTools.YOU_SEARCH: _get_you_search,
     AvailableTools.SEC_FILINGS: _get_sec_filings,
     AvailableTools.PRESS_RELEASES: _get_press_releases,
     AvailableTools.PUBMED: _get_pubmed,
-    AvailableTools.TAVILY: _get_tavily,
+    # AvailableTools.TAVILY: _get_tavily,
     AvailableTools.WIKIPEDIA: _get_wikipedia,
-    AvailableTools.TAVILY_ANSWER: _get_tavily_answer,
+    # AvailableTools.TAVILY_ANSWER: _get_tavily_answer,
 }
 
 TOOL_OPTIONS = {e.value: e.value for e in AvailableTools}

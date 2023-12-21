@@ -17,6 +17,7 @@ OpenGPTs gives you more control, allowing you to configure:
 </p>
 
 **Key Links**
+
 - [GPTs: a simple hosted version](https://opengpts-example-vz4y4ooboq-uc.a.run.app/)
 - [Assistants API: a getting started guide](API.md)
 - [Memory: how to use long-term memory](MEMORY.md)
@@ -25,11 +26,27 @@ OpenGPTs gives you more control, allowing you to configure:
 
 ### Start the backend
 
+**Activate a virtual environment**
+
+```shell
+conda create --name open-gpt python=3.11
+conda activate open-gpt
+```
+
 **Install requirements**
 
 ```shell
 cd backend
 pip install -r requirements.txt
+```
+
+**Start Redis in Docker**
+We need redis stack for vector search
+
+```shell
+docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
+# verify it's running
+docker exec -it redis-stack-server redis-cli
 ```
 
 **Set up persistence layer**
@@ -38,7 +55,7 @@ The backed by default uses Redis for saving agent configurations and chat messag
 In order to you use this, you need to a `REDIS_URL` variable.
 
 ```shell
-export REDIS_URL=...
+export REDIS_URL=redis://127.0.0.1:6379
 ```
 
 **Set up vector database**
@@ -47,6 +64,8 @@ The backend by default also uses Redis as a vector database,
 although you can easily switch this out to use any of the 50+ vector databases in LangChain.
 If you are using Redis as a vectorstore, the above environment variable should work
 (assuming you've enabled `redissearch`)
+
+docker container run --env REDIS_URL=redis://host.docker.internal:6379 --env OPENAI_API_KEY="test" -p 8100:8100 backend_gpts
 
 **Set up language models**
 
@@ -83,7 +102,13 @@ Start the backend server
 
 ```shell
 langchain serve --port=8100
+
+or
+
+uvicorn app.server:app --port=8100 --reload
 ```
+
+````
 
 **2. Start the frontend**
 
@@ -91,7 +116,7 @@ langchain serve --port=8100
 cd frontend
 yarn
 yarn dev
-```
+````
 
 Navigate to [http://localhost:5173/](http://localhost:5173/) and enjoy!
 
@@ -99,10 +124,21 @@ Navigate to [http://localhost:5173/](http://localhost:5173/) and enjoy!
 
 This project supports a Docker-based setup, streamlining installation and execution. It automatically builds images for the frontend and backend and sets up Redis using docker-compose.
 
+### Only Run Backend with docker
+
+As redis is running on host machine, we need to pass the host machine's ip address to the docker container
+Docker networking issue: If your application is running inside a Docker container and the Redis server is running on your host machine, 127.0.0.1 refers to the Docker container itself, not the host machine. In this case, you need to use host.docker.internal instead of 127.0.0.1 to refer to your host machine from within the Docker container.
+
+```shell
+docker build -t backend_gpts .
+docker container run --env REDIS_URL=redis://host.docker.internal:6379 --env OPENAI_API_KEY="test" -p 8100:8100 backend_gpts
+```
+
 ### Quick Start
 
 1. **Clone the Repository:**  
    Obtain the project files by cloning the repository.
+
    ```
    git clone https://github.com/langchain-ai/opengpts.git
    cd opengpts
@@ -110,9 +146,11 @@ This project supports a Docker-based setup, streamlining installation and execut
 
 2. **Run with Docker Compose:**  
    In the root directory of the project, execute:
+
    ```
    docker compose up
    ```
+
    This command builds the Docker images for the frontend and backend from their respective Dockerfiles and starts all necessary services, including Redis.
 
 3. **Access the Application:**  
@@ -126,6 +164,7 @@ This project supports a Docker-based setup, streamlining installation and execut
    This command rebuilds the images with your latest changes and restarts the services.
 
 ### Note
+
 - Ensure Docker and docker-compose are installed on your system.
 - Adjust the `.env` file as required for specific environment configurations.
 
