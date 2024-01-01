@@ -98,7 +98,9 @@ export LANGCHAIN_TRACING_V2="true"
 export LANGCHAIN_API_KEY=...
 ```
 
-Start the backend server
+#
+
+**Start the backend server**
 
 ```shell
 langchain serve --port=8100
@@ -108,15 +110,13 @@ or
 uvicorn app.server:app --port=8100 --reload
 ```
 
-````
-
-**2. Start the frontend**
+**Start the frontend**
 
 ```shell
 cd frontend
 yarn
 yarn dev
-````
+```
 
 Navigate to [http://localhost:5173/](http://localhost:5173/) and enjoy!
 
