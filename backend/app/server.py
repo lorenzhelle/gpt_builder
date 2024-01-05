@@ -24,7 +24,7 @@ def ingest_files(files: list[UploadFile], config: str = Form(...)) -> None:
     return ingest_runnable.batch([file.file for file in files], config)
 
 
-app.mount("", StaticFiles(directory=str(ROOT / "ui"), html=True), name="ui")
+# app.mount("", StaticFiles(directory=str(ROOT / "ui"), html=True), name="ui")
 
 if __name__ == "__main__":
     import uvicorn

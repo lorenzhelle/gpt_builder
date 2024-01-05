@@ -11,7 +11,7 @@ RUN pwd
 
 COPY . .
 
-RUN rm poetry.lock
+# RUN rm poetry.lock
 
 RUN pip install .
 
