@@ -107,8 +107,6 @@ langchain serve --port=8100
 
 or
 
-export REDIS_URL="<>" from redis cloud
-export OPENAI_API_KEY="<>"
 uvicorn app.server:app --port=8100 --reload
 ```
 
@@ -130,14 +128,6 @@ This project supports a Docker-based setup, streamlining installation and execut
 
 As redis is running on host machine, we need to pass the host machine's ip address to the docker container
 Docker networking issue: If your application is running inside a Docker container and the Redis server is running on your host machine, 127.0.0.1 refers to the Docker container itself, not the host machine. In this case, you need to use host.docker.internal instead of 127.0.0.1 to refer to your host machine from within the Docker container.
-
-Redis Connection URL From Azure:
-
-```shell
-see Notion
-```
-
-If using Redis on Azure, replace the host.docker.internal with the Redis Cloud Url
 
 ```shell
 docker build -t backend_gpts .
