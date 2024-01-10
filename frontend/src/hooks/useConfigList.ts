@@ -94,7 +94,7 @@ export function useConfigList(): ConfigListProps {
         JSON.stringify({ configurable: { assistant_id } })
       );
       const [saved] = await Promise.all([
-        fetch(`/assistants/${assistant_id}`, {
+        fetch(`${API_BASE_URL}/assistants/${assistant_id}`, {
           method: "PUT",
           body: JSON.stringify({ name, config, public: isPublic }),
           headers: {
