@@ -4,11 +4,22 @@ import orjson
 from fastapi import FastAPI, Form, UploadFile
 from fastapi.staticfiles import StaticFiles
 from gizmo_agent import ingest_runnable
+from fastapi.middleware.cors import CORSMiddleware
+
 
 from app.api import router as api_router
 
-app = FastAPI(title="OpenGPTs API")
+app = FastAPI(title="KirchnerRobertGPTs API")
 
+origins = ["http://localhost:5173", "https://mango-mud-046feb603.4.azurestaticapps.net"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Get root of app, used to point to directory containing static files
 ROOT = Path(__file__).parent.parent
