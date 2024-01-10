@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import orderBy from "lodash/orderBy";
+import { API_BASE_URL } from "../utils/config";
 
 export interface Config {
   assistant_id: string;
@@ -50,7 +51,7 @@ export function useConfigList(): ConfigListProps {
       const searchParams = new URLSearchParams(window.location.search);
       const shared_id = searchParams.get("shared_id");
       const [myConfigs, publicConfigs] = await Promise.all([
-        fetch("/assistants/", {
+        fetch(`${API_BASE_URL}/assistants/`, {
           headers: {
             Accept: "application/json",
           },
@@ -58,7 +59,8 @@ export function useConfigList(): ConfigListProps {
           .then((r) => r.json())
           .then((li) => li.map((c: Config) => ({ ...c, mine: true }))),
         fetch(
-          "/assistants/public/" + (shared_id ? `?shared_id=${shared_id}` : ""),
+          `{BASE_URL}/assistants/public/` +
+            (shared_id ? `?shared_id=${shared_id}` : ""),
           {
             headers: {
               Accept: "application/json",

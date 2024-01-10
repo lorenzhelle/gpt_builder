@@ -107,6 +107,8 @@ langchain serve --port=8100
 
 or
 
+export REDIS_URL=redis://127.0.0.1:6379
+export OPENAI_API_KEY="sk-..."
 uvicorn app.server:app --port=8100 --reload
 ```
 

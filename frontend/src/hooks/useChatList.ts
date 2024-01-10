@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import orderBy from "lodash/orderBy";
+import { API_BASE_URL } from "../utils/config";
 
 export interface Message {
   type: string;
@@ -53,7 +54,7 @@ export function useChatList(): ChatListProps {
 
   useEffect(() => {
     async function fetchChats() {
-      const chats = await fetch("/threads/", {
+      const chats = await fetch(`${API_BASE_URL}/threads/`, {
         headers: {
           Accept: "application/json",
         },
@@ -70,7 +71,7 @@ export function useChatList(): ChatListProps {
       assistant_id: string,
       thread_id: string = crypto.randomUUID()
     ) => {
-      const saved = await fetch(`/threads/${thread_id}`, {
+      const saved = await fetch(`${API_BASE_URL}/threads/${thread_id}`, {
         method: "PUT",
         body: JSON.stringify({ assistant_id, name }),
         headers: {

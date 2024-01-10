@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { simplifySchema } from "../utils/simplifySchema";
 import { getDefaults } from "../utils/defaults";
+import { API_BASE_URL } from "../utils/config";
 
 export interface SchemaField {
   type: string;
@@ -37,7 +38,7 @@ export function useSchemas() {
 
   useEffect(() => {
     async function save() {
-      const configSchema = await fetch("/runs/config_schema")
+      const configSchema = await fetch(`${API_BASE_URL}/runs/config_schema`)
         .then((r) => r.json())
         .then(simplifySchema);
       setSchemas({

@@ -8,6 +8,7 @@ import { Chat as ChatType, useChatList } from "./hooks/useChatList";
 import { useSchemas } from "./hooks/useSchemas";
 import { useStreamState } from "./hooks/useStreamState";
 import { useConfigList } from "./hooks/useConfigList";
+import { API_BASE_URL } from "./utils/config";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -62,6 +63,7 @@ function App() {
     },
     [enterChat, stopStream, sidebarOpen, currentChat]
   );
+  console.log("API URL:", API_BASE_URL);
 
   const content = currentChat ? (
     <Chat
