@@ -107,7 +107,7 @@ langchain serve --port=8100
 
 or
 
-export REDIS_URL=redis://127.0.0.1:6379
+export REDIS_URL=redis://default:cSe1uyJ0UwNQKReQqGO6M1x0lzDanT0s@redis-19090.c56.east-us.azure.cloud.redislabs.com:19090
 export OPENAI_API_KEY="sk-..."
 uvicorn app.server:app --port=8100 --reload
 ```

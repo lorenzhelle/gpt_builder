@@ -59,7 +59,7 @@ export function useConfigList(): ConfigListProps {
           .then((r) => r.json())
           .then((li) => li.map((c: Config) => ({ ...c, mine: true }))),
         fetch(
-          `{BASE_URL}/assistants/public/` +
+          `${API_BASE_URL}/assistants/public/` +
             (shared_id ? `?shared_id=${shared_id}` : ""),
           {
             headers: {
