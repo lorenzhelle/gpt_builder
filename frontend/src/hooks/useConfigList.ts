@@ -55,9 +55,11 @@ export function useConfigList(): ConfigListProps {
           headers: {
             Accept: "application/json",
           },
+          credentials: "include",
         })
           .then((r) => r.json())
           .then((li) => li.map((c: Config) => ({ ...c, mine: true }))),
+
         fetch(
           `${API_BASE_URL}/assistants/public/` +
             (shared_id ? `?shared_id=${shared_id}` : ""),
@@ -101,11 +103,13 @@ export function useConfigList(): ConfigListProps {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
+          credentials: "include",
         }).then((r) => r.json()),
         files.length
           ? fetch(`/ingest`, {
               method: "POST",
               body: formData,
+              credentials: "include",
             })
           : Promise.resolve(),
       ]);

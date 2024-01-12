@@ -55,6 +55,7 @@ export function useChatList(): ChatListProps {
   useEffect(() => {
     async function fetchChats() {
       const chats = await fetch(`${API_BASE_URL}/threads/`, {
+        credentials: "include",
         headers: {
           Accept: "application/json",
         },
@@ -78,6 +79,7 @@ export function useChatList(): ChatListProps {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
+        credentials: "include",
       }).then((r) => r.json());
       setChats(saved);
       setCurrent(saved.thread_id);

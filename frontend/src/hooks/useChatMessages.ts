@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import { Message } from "./useChatList";
 import { StreamState } from "./useStreamState";
+import { API_BASE_URL } from "../utils/config";
 
 async function getMessages(threadId: string) {
-  const { messages } = await fetch(`/threads/${threadId}/messages`, {
-    headers: {
-      Accept: "application/json",
-    },
-  }).then((r) => r.json());
+  const { messages } = await fetch(
+    `${API_BASE_URL}/threads/${threadId}/messages`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    }
+  ).then((r) => r.json());
   return messages;
 }
 
