@@ -26,7 +26,7 @@ class PythonREPLInput(BaseModel):
 
 
 RETRIEVER_DESCRIPTION = """Can be used to look up information that was uploaded to this assistant.
-If the user is referencing particular files, that is often a good hint that information may be here."""
+If the user is referencing particular files, that is often a good hint that information may be here. Use it whenever the user is asking you to use uploaded information."""
 
 
 def get_retrieval_tool(assistant_id: str):
@@ -99,8 +99,8 @@ def _get_tavily_answer():
 
 class AvailableTools(str, Enum):
     DDG_SEARCH = "DDG Search"
-    TAVILY = "Search (Tavily)"
-    TAVILY_ANSWER = "Search (short answer, Tavily)"
+    # TAVILY = "Search (Tavily)"
+    # TAVILY_ANSWER = "Search (short answer, Tavily)"
     RETRIEVAL = "Retrieval"
     ARXIV = "Arxiv"
     YOU_SEARCH = "You.com Search"
