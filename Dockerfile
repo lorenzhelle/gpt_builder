@@ -22,11 +22,12 @@ WORKDIR /frontend
 COPY ./frontend/package.json ./
 COPY ./frontend/yarn.lock ./
 
+RUN yarn install
+
+COPY ./frontend .
 # Install Yarn and dependencies
 RUN yarn build
 
-# Copy the rest of the frontend code
-COPY ./frontend .
 
 # ---- Release Stage ----
 FROM python:3.11 as release
