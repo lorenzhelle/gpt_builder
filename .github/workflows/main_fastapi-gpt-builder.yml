@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - fastapi-gpt-builder
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://gptbuilder.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_91a30696def54b90a22ed46154768f44 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_d1d35f6c50e0410794ee8a2c2b6fdc5c }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: gptbuilder.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_91a30696def54b90a22ed46154768f44 }}/backend:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'fastapi-gpt-builder'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_e2d46ba8880e436b859dfbd3f531ecb6 }}
+        images: 'gptbuilder.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_91a30696def54b90a22ed46154768f44 }}/backend:${{ github.sha }}'
