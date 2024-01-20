@@ -37,6 +37,7 @@ conda activate open-gpt
 
 ```shell
 cd backend
+poetry install
 pip install -r requirements.txt
 ```
 
@@ -107,7 +108,7 @@ langchain serve --port=8100
 
 or
 
-export REDIS_URL=redis://default:cSe1uyJ0UwNQKReQqGO6M1x0lzDanT0s@redis-19090.c56.east-us.azure.cloud.redislabs.com:19090
+export REDIS_URL=<REDIS_URL>
 export OPENAI_API_KEY="sk-..."
 uvicorn app.server:app --port=8100 --reload
 ```

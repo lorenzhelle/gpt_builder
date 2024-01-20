@@ -55,8 +55,8 @@ class ConfigurableAgent(RunnableBinding):
             _agent = get_openai_function_agent(_tools, system_message)
         elif agent == GizmoAgentType.GPT_4:
             _agent = get_openai_function_agent(_tools, system_message, gpt_4=True)
-        # elif agent == GizmoAgentType.AZURE_OPENAI:
-        #     _agent = get_openai_function_agent(_tools, system_message, azure=True)
+        elif agent == GizmoAgentType.AZURE_OPENAI:
+            _agent = get_openai_function_agent(_tools, system_message, azure=True)
         else:
             raise ValueError("Unexpected agent type")
         agent_executor = get_agent_executor(
@@ -118,7 +118,7 @@ agent = (
             id="tools",
             name="Tools",
             options=TOOL_OPTIONS,
-            default=["retrieval"],
+            default=[],
         ),
     )
     .configurable_alternatives(
