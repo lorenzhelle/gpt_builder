@@ -101,7 +101,7 @@ export function Layout(props: {
         <div className="flex-1 text-sm font-semibold leading-6 text-gray-900 lg:pl-72">
           {props.subtitle ? (
             <>
-              Kirchner Robert GPT:{" "}
+              Kirchner Robert GPT-Builder:{" "}
               <span className="font-normal">{props.subtitle}</span>
             </>
           ) : (
