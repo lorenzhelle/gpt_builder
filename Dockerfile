@@ -23,7 +23,7 @@ COPY ./frontend/package.json ./
 COPY ./frontend/yarn.lock ./
 
 # Install Yarn and dependencies
-RUN yarn install
+RUN yarn build
 
 # Copy the rest of the frontend code
 COPY ./frontend .
