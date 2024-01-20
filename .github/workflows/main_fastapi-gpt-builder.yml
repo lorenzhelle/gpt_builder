@@ -31,8 +31,8 @@ jobs:
         with:
           push: true
           tags: gptbuilder.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_91a30696def54b90a22ed46154768f44 }}/backend:${{ github.sha }}
-          file: ./backend/Dockerfile
-          context: ./backend
+          file: ./Dockerfile
+          context: .
 
   deploy:
     runs-on: ubuntu-latest
