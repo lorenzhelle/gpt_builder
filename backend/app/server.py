@@ -4,6 +4,8 @@ import orjson
 from fastapi import FastAPI, Form, UploadFile
 from fastapi.staticfiles import StaticFiles
 from gizmo_agent import ingest_runnable
+from dotenv import load_dotenv
+
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -12,6 +14,9 @@ from app.api import router as api_router
 app = FastAPI(title="KirchnerRobertGPTs API")
 
 origins = ["http://localhost:5173", "https://mango-mud-046feb603.4.azurestaticapps.net"]
+
+# Load environment variables from .env file
+load_dotenv()
 
 app.add_middleware(
     CORSMiddleware,

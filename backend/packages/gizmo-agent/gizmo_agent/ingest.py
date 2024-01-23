@@ -6,6 +6,7 @@ from langchain.schema.runnable import ConfigurableField
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores.redis import Redis
 
+
 index_schema = {
     "tag": [{"name": "namespace"}],
 }

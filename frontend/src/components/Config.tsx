@@ -7,7 +7,7 @@ import { orderBy } from "lodash";
 import { ConfigListProps } from "../hooks/useConfigList";
 import { SchemaField, Schemas } from "../hooks/useSchemas";
 import { cn } from "../utils/cn";
-import { FileUploadDropzone } from "./FileUpload";
+import { FileUploadDropzone } from "./file-upload/FileUpload";
 
 function Label(props: { id: string; title: string }) {
   return (
@@ -233,6 +233,7 @@ export function Config(props: {
       ]);
     }
   }, [dropzone.acceptedFiles]);
+
   const [inflight, setInflight] = useState(false);
   const readonly = !!props.config && !inflight;
   return (
