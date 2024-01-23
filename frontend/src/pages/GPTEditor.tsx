@@ -1,13 +1,13 @@
 import React from "react";
 import { FileUploadContainer } from "../components/file-upload/FileUploadContainer";
-import { useConfigList } from "../hooks/useConfigList";
-import { useSchemas } from "../hooks/useSchemas";
 
 interface Props {}
 
-export const GPTEditor: React.FC<Props> = ({}) => {
-  const { configSchema, configDefaults } = useSchemas();
-  const { configs, currentConfig, saveConfig, enterConfig } = useConfigList();
+export const GPTEditor: React.FC<Props> = () => {
+  // const { configSchema, configDefaults } = useSchemas();
+  // const { configs, currentConfig, saveConfig, enterConfig } = useConfigList();
+
+  // console.log("configSchema:", configSchema);
 
   return (
     <div>

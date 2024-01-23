@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 
 interface Props {}
 
-export const FileUploadContainer: React.FC<Props> = ({}) => {
+export const FileUploadContainer: React.FC<Props> = () => {
   const [files, setFiles] = useState<File[]>([]);
   const dropzone = useDropzone({
     multiple: true,
