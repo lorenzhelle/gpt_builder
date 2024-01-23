@@ -1,7 +1,8 @@
 from pathlib import Path
+from fastapi.responses import HTMLResponse
 
 import orjson
-from fastapi import FastAPI, Form, UploadFile
+from fastapi import FastAPI, Form, HTTPException, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
 from gizmo_agent import ingest_runnable
 from dotenv import load_dotenv
@@ -13,7 +14,10 @@ from app.api import router as api_router
 
 app = FastAPI(title="KirchnerRobertGPTs API")
 
-origins = ["http://localhost:5173", "https://mango-mud-046feb603.4.azurestaticapps.net"]
+origins = [
+    "http://localhost:5173",
+    "https://mango-mud-046feb603.4.azurestaticapps.net",
+]
 
 # Load environment variables from .env file
 load_dotenv()
@@ -41,6 +45,15 @@ def ingest_files(files: list[UploadFile], config: str = Form(...)) -> None:
 
 
 app.mount("", StaticFiles(directory=str(ROOT / "ui"), html=True), name="ui")
+
+
+@app.exception_handler(404)
+async def not_found_exception_handler(request: Request, exc: HTTPException):
+    # serve index.html for all 404s see https://stackoverflow.com/questions/76527355/fastapi-catch-all-route-put-after-root-route-mount-doesnt-get-hit
+    return HTMLResponse(
+        Path(str(ROOT / "ui" / "index.html")).read_text(), status_code=200
+    )
+
 
 if __name__ == "__main__":
     import uvicorn
