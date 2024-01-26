@@ -9,6 +9,7 @@ import { useSchemas } from "./hooks/useSchemas";
 import { useStreamState } from "./hooks/useStreamState";
 import { useConfigList } from "./hooks/useConfigList";
 import { API_BASE_URL } from "./utils/config";
+import { NewGPT } from "./components/NewGPT";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -73,15 +74,7 @@ function App() {
       stream={stream}
     />
   ) : (
-    <NewChat
-      startChat={startChat}
-      configSchema={configSchema}
-      configDefaults={configDefaults}
-      configs={configs}
-      currentConfig={currentConfig}
-      saveConfig={saveConfig}
-      enterConfig={enterConfig}
-    />
+    <NewGPT />
   );
 
   const currentChatConfig = configs?.find(

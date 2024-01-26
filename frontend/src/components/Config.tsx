@@ -216,17 +216,26 @@ export function Config(props: {
   }, [props.config, props.configDefaults]);
   useEffect(() => {
     if (dropzone.acceptedFiles.length > 0) {
-      setValues((values) => ({
-        configurable: {
-          ...values?.configurable,
-          tools: [
-            ...((values?.configurable?.tools ?? []) as string[]).filter(
-              (tool) => tool !== "Retrieval"
-            ),
-            "Retrieval",
-          ],
-        },
-      }));
+      setValues((values) => {
+        // Get the current tools, or an empty array if it's undefined
+        const currentTools = (values?.configurable?.tools as []) ?? [];
+
+        // Filter out "Retrieval" from the current tools
+        const filteredTools = currentTools.filter(
+          (tool) => tool !== "Retrieval"
+        );
+
+        // Add "Retrieval" back to the end of the tools array
+        const newTools = [...filteredTools, "Retrieval"];
+
+        // Return the new state
+        return {
+          configurable: {
+            ...values?.configurable,
+            tools: newTools,
+          },
+        };
+      });
       setFiles((files) => [
         ...files.filter((f) => !dropzone.acceptedFiles.includes(f)),
         ...dropzone.acceptedFiles,
@@ -257,6 +266,7 @@ export function Config(props: {
           const form = e.target as HTMLFormElement;
           const key = form.key.value;
           if (!key) return;
+
           setInflight(true);
           await props.saveConfig(
             key,

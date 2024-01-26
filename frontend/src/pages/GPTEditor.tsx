@@ -1,17 +1,67 @@
-import React from "react";
+import { Navbar, Tooltip } from "flowbite-react";
+import React, { useEffect, useState } from "react";
+import { HiOutlineArrowLeft } from "react-icons/hi";
+import { Link, useNavigate } from "react-router-dom";
 import { FileUploadContainer } from "../components/file-upload/FileUploadContainer";
+import { useConfigList } from "../hooks/useConfigList";
+import { useSchemas } from "../hooks/useSchemas";
+import { NavbarComponent } from "../components/NavBar";
 
 interface Props {}
 
-export const GPTEditor: React.FC<Props> = () => {
-  // const { configSchema, configDefaults } = useSchemas();
-  // const { configs, currentConfig, saveConfig, enterConfig } = useConfigList();
+interface FormValues {
+  name: string;
+  description: string;
+  instruction: string;
+}
 
-  // console.log("configSchema:", configSchema);
+export const GPTEditor: React.FC<Props> = () => {
+  const navigate = useNavigate();
+  const { configDefaults } = useSchemas();
+  const { saveConfig } = useConfigList();
+
+  const [formValues, setFormValues] = useState<FormValues>({
+    name: "",
+    description: "",
+    instruction: "",
+  });
+
+  const goBack = () => {
+    navigate(-1);
+  };
+
+  const createGPT = async () => {
+    console.log("createGPT");
+    if (configDefaults == null) {
+      console.log("configDefaults is null");
+      return;
+    }
+
+    // adjust config
+    const config = {
+      ...configDefaults,
+      configurable: {
+        ...configDefaults.configurable,
+        "type==agent/system_message": formValues.instruction,
+      },
+    };
+
+    saveConfig(formValues.name, config, [], false).then((res) => {
+      console.log("saveConfig:", res);
+    });
+  };
 
   return (
-    <div>
-      <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+    <div className="min-h-screen bg-gray-100 flex  flex-col ">
+      <NavbarComponent
+        customBrand={
+          <div onClick={goBack} className="flex items-center">
+            <HiOutlineArrowLeft className="h-5 w-5 mr-1" />
+            <div>Back</div>
+          </div>
+        }
+      />
+      <div className="flex flex-1 justify-center items-center ">
         <div className="bg-white p-8 rounded shadow-md w-full max-w-3xl">
           <form>
             <div className="mb-4">
@@ -25,6 +75,14 @@ export const GPTEditor: React.FC<Props> = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="name"
                 type="text"
+                value={formValues.name}
+                onChange={(evt) =>
+                  setFormValues({
+                    ...formValues,
+                    name: evt.target.value,
+                  })
+                }
+                required
                 placeholder="Name your GPT"
               />
             </div>
@@ -38,6 +96,13 @@ export const GPTEditor: React.FC<Props> = () => {
               <textarea
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="description"
+                value={formValues.description}
+                onChange={(evt) =>
+                  setFormValues({
+                    ...formValues,
+                    description: evt.target.value,
+                  })
+                }
                 rows={5}
                 placeholder="Add a short description about what this GPT does."
               ></textarea>
@@ -53,6 +118,13 @@ export const GPTEditor: React.FC<Props> = () => {
               <textarea
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="instruction"
+                value={formValues.instruction}
+                onChange={(evt) =>
+                  setFormValues({
+                    ...formValues,
+                    instruction: evt.target.value,
+                  })
+                }
                 rows={5}
                 placeholder="What does this GPT do? How does it behave? What should it avoid doing?"
               ></textarea>
@@ -61,8 +133,10 @@ export const GPTEditor: React.FC<Props> = () => {
             <KnowledgeUpload />
             <div className="flex items-center justify-between">
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="bg-blue-500 hover:bg-blue-700 text-white disabled:bg-slate-400 disabled:cursor-not-allowed font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="button"
+                onClick={createGPT}
+                disabled={formValues.name == "" || formValues.instruction == ""}
               >
                 Create GPT
               </button>

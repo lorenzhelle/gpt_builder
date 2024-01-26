@@ -103,7 +103,7 @@ dnd_bot = create_dnd_bot(dnd_llm, checkpoint=RedisCheckpoint()).with_types(
 
 agent = (
     ConfigurableAgent(
-        agent=GizmoAgentType.GPT_35_TURBO,
+        agent=GizmoAgentType.GPT_4,
         tools=[],
         system_message=DEFAULT_SYSTEM_MESSAGE,
         assistant_id=None,
