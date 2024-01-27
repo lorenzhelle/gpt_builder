@@ -47,17 +47,6 @@ function App() {
     [currentChat, startStream, configs]
   );
 
-  const startChat = useCallback(
-    async (message: string) => {
-      if (!currentConfig) return;
-      const chat = await createChat(message, currentConfig.assistant_id);
-      return startTurn(message, chat);
-    },
-    [createChat, startTurn, currentConfig]
-  );
-
-  console.log("currentConfig:", currentConfig);
-
   const selectChat = useCallback(
     async (id: string | null) => {
       console.log("selectChat:", id);
