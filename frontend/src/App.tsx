@@ -1,21 +1,20 @@
-import { useCallback, useMemo, useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { useCallback, useMemo, useState } from "react";
 import { Chat } from "./components/Chat";
 import { ChatList } from "./components/ChatList";
 import { Layout } from "./components/Layout";
-import { NewChat } from "./components/NewChat";
+import { NewGPT } from "./components/NewGPT";
 import { Chat as ChatType, useChatList } from "./hooks/useChatList";
+import { useConfigList } from "./hooks/useConfigList";
 import { useSchemas } from "./hooks/useSchemas";
 import { useStreamState } from "./hooks/useStreamState";
-import { useConfigList } from "./hooks/useConfigList";
 import { API_BASE_URL } from "./utils/config";
-import { NewGPT } from "./components/NewGPT";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { configSchema, configDefaults } = useSchemas();
-  const { chats, currentChat, createChat, enterChat } = useChatList();
-  const { configs, currentConfig, saveConfig, enterConfig } = useConfigList();
+  const { configSchema } = useSchemas();
+  const { chats, currentChat, enterChat } = useChatList();
+  const { configs, enterConfig } = useConfigList();
   const { startStream, stopStream, stream } = useStreamState();
 
   const startTurn = useCallback(
@@ -43,14 +42,14 @@ function App() {
     [currentChat, startStream, configs]
   );
 
-  const startChat = useCallback(
-    async (message: string) => {
-      if (!currentConfig) return;
-      const chat = await createChat(message, currentConfig.assistant_id);
-      return startTurn(message, chat);
-    },
-    [createChat, startTurn, currentConfig]
-  );
+  // const startChat = useCallback(
+  //   async (message: string) => {
+  //     if (!currentConfig) return;
+  //     const chat = await createChat(message, currentConfig.assistant_id);
+  //     return startTurn(message, chat);
+  //   },
+  //   [createChat, startTurn, currentConfig]
+  // );
 
   const selectChat = useCallback(
     async (id: string | null) => {

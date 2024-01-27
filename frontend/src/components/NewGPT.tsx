@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 interface Props {}
 
-export const NewGPT: React.FC<Props> = ({}) => {
+export const NewGPT: React.FC<Props> = () => {
   const navigate = useNavigate();
   return (
     <div className="flex flex-1 justify-center">

@@ -1,11 +1,10 @@
-import { Navbar, Tooltip } from "flowbite-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { HiOutlineArrowLeft } from "react-icons/hi";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { NavbarComponent } from "../components/NavBar";
 import { FileUploadContainer } from "../components/file-upload/FileUploadContainer";
 import { useConfigList } from "../hooks/useConfigList";
 import { useSchemas } from "../hooks/useSchemas";
-import { NavbarComponent } from "../components/NavBar";
 
 interface Props {}
 
