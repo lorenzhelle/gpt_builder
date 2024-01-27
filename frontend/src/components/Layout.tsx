@@ -1,6 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
+import { GPTSelector } from "./GPTSelector";
+import { Config } from "../hooks/useConfigList";
 
 export function Layout(props: {
   sidebarOpen: boolean;
@@ -8,6 +10,8 @@ export function Layout(props: {
   sidebar: React.ReactNode;
   children: React.ReactNode;
   subtitle?: React.ReactNode;
+  readonly gpts: Config[];
+  readonly onSelectGPT: (gpt: Config) => void;
 }) {
   return (
     <>
@@ -99,14 +103,15 @@ export function Layout(props: {
           <Bars3Icon className="h-6 w-6" aria-hidden="true" />
         </button>
         <div className="flex-1 text-sm font-semibold leading-6 text-gray-900 lg:pl-72">
-          {props.subtitle ? (
+          <GPTSelector gpts={props.gpts} onSelect={props.onSelectGPT} />
+          {/* {props.subtitle ? (
             <>
               Kirchner Robert GPT-Builder:{" "}
               <span className="font-normal">{props.subtitle}</span>
             </>
           ) : (
             "Kirchner Robert GPT-Builder"
-          )}
+          )} */}
         </div>
         <div className="inline-flex items-center rounded-md bg-pink-100 px-2 py-1 text-xs font-medium text-pink-700">
           This is a prototype version. Don't use with sensitive data.

@@ -1,35 +1,17 @@
 import { useEffect } from "react";
 import { Chat as ChatType } from "../hooks/useChatList";
-import { useChatMessages } from "../hooks/useChatMessages";
 import { StreamStateProps } from "../hooks/useStreamState";
-import { Message } from "./Message";
+import { useChatMessages } from "../hooks/useChatMessages";
 import TypingBox from "./TypingBox";
+import { Message } from "./Message";
 
 interface ChatProps extends Pick<StreamStateProps, "stream" | "stopStream"> {
-  assistantId: string;
-  threadId: string | null;
-  startStream: (message: string, chat?: ChatType | null) => Promise<void>;
-  createChat: (message: string, assistantId: string) => Promise<ChatType>;
+  chat: ChatType;
+  startStream: (message: string) => Promise<void>;
 }
 
 export function Chat(props: ChatProps) {
-  const messages = useChatMessages(props.threadId, props.stream);
-
-  const startChat = async (message: string) => {
-    if (!props.assistantId) return;
-    const chat = await props.createChat(message, props.assistantId);
-    return props.startStream(message, chat);
-  };
-
-  const handleMessageSubmit = (message: string) => {
-    if (props.threadId) {
-      // Send message to existing chat
-      return props.startStream(message);
-    } else {
-      // Create new chat
-      return startChat(message);
-    }
-  };
+  const messages = useChatMessages(props.chat.thread_id, props.stream);
 
   useEffect(() => {
     scrollTo({
@@ -63,7 +45,7 @@ export function Chat(props: ChatProps) {
       )}
       <div className="fixed left-0 lg:left-72 bottom-0 right-0 p-4">
         <TypingBox
-          onSubmit={handleMessageSubmit}
+          onSubmit={props.startStream}
           disabled={props.stream?.status === "inflight"}
         />
       </div>

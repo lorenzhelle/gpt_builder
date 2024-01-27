@@ -31,6 +31,7 @@ export interface ChatListProps {
     thread_id?: string
   ) => Promise<Chat>;
   enterChat: (id: string | null) => void;
+  deselectChat: () => void;
 }
 
 function chatsReducer(
@@ -92,10 +93,15 @@ export function useChatList(): ChatListProps {
     setCurrent(id);
   }, []);
 
+  const deselectChat = useCallback(() => {
+    setCurrent(null);
+  }, []);
+
   return {
     chats,
     currentChat: chats?.find((c) => c.thread_id === current) || null,
     createChat,
     enterChat,
+    deselectChat,
   };
 }

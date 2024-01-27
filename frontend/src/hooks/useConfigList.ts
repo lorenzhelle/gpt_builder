@@ -120,6 +120,7 @@ export function useConfigList(): ConfigListProps {
   );
 
   const enterConfig = useCallback((key: string | null) => {
+    console.log("enterConfig", key);
     setCurrent(key);
   }, []);
 
