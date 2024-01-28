@@ -5,7 +5,7 @@ import { NavbarComponent } from "../components/NavBar";
 import { FileUploadContainer } from "../components/file-upload/FileUploadContainer";
 import { useConfigList } from "../hooks/useConfigList";
 import { useSchemas } from "../hooks/useSchemas";
-import { Alert } from "flowbite-react";
+import { Alert, Button } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 
 interface Props {}
@@ -21,8 +21,11 @@ export const GPTEditor: React.FC<Props> = () => {
   const { configDefaults } = useSchemas();
   const { saveConfig } = useConfigList();
 
+  console.log("configDefaults:", configDefaults);
+
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null); // New state for error handling
+  const [isLoading, setisLoading] = useState(false);
 
   const [formValues, setFormValues] = useState<FormValues>({
     name: "",
@@ -36,10 +39,13 @@ export const GPTEditor: React.FC<Props> = () => {
 
   const createGPT = async () => {
     console.log("createGPT");
+    setisLoading(true);
     if (configDefaults == null) {
       console.log("configDefaults is null");
       return;
     }
+
+    console.log(configDefaults);
 
     const haveFiles = files.length > 0;
 
@@ -48,13 +54,16 @@ export const GPTEditor: React.FC<Props> = () => {
       ...configDefaults,
       configurable: {
         ...configDefaults.configurable,
-        "type==agent/system_message": formValues.instruction,
-        tools: haveFiles ? ["Retrieval"] : [], // use only retrieval tool for now
+        "type==assistant/system_message": formValues.instruction,
+        "type==chatbot/system_message": formValues.instruction,
+        "type==chat_retrieval/system_message": formValues.instruction,
+        "type==assistant/tools": haveFiles ? ["Retrieval"] : [], // use only retrieval tool for now
       },
     };
 
     saveConfig(formValues.name, config, files, false)
       .then(() => {
+        setisLoading(false);
         goBack();
       })
       .catch((err) => {
@@ -155,14 +164,18 @@ export const GPTEditor: React.FC<Props> = () => {
               <FileUploadContainer files={files} setFiles={setFiles} />
             </div>
             <div className="flex items-center justify-between">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white disabled:bg-slate-400 disabled:cursor-not-allowed font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="button"
+              <Button
+                disabled={
+                  formValues.name == "" ||
+                  formValues.instruction == "" ||
+                  isLoading
+                }
+                color="blue"
+                isProcessing={isLoading}
                 onClick={createGPT}
-                disabled={formValues.name == "" || formValues.instruction == ""}
               >
                 Create GPT
-              </button>
+              </Button>
             </div>
             {error && <ErrorAlert />} {/* Display error message if error */}
           </form>

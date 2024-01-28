@@ -1,16 +1,20 @@
 from enum import Enum
 
 from langchain.pydantic_v1 import BaseModel, Field
-from langchain.retrievers import KayAiRetriever, PubMedRetriever, WikipediaRetriever
-from langchain.retrievers.you import YouRetriever
-from langchain.tools import ArxivQueryRun, DuckDuckGoSearchRun
 from langchain.tools.retriever import create_retriever_tool
-from langchain.tools.tavily_search import TavilyAnswer, TavilySearchResults
-from langchain.utilities import ArxivAPIWrapper
-from langchain.utilities.tavily_search import TavilySearchAPIWrapper
-from langchain.vectorstores.redis import RedisFilter
+from langchain_community.retrievers import (
+    KayAiRetriever,
+    PubMedRetriever,
+    WikipediaRetriever,
+)
+from langchain_community.retrievers.you import YouRetriever
+from langchain_community.tools import ArxivQueryRun, DuckDuckGoSearchRun
+from langchain_community.tools.tavily_search import TavilyAnswer, TavilySearchResults
+from langchain_community.utilities.arxiv import ArxivAPIWrapper
+from langchain_community.utilities.tavily_search import TavilySearchAPIWrapper
+from langchain_community.vectorstores.redis import RedisFilter
 
-from gizmo_agent.ingest import vstore
+from app.upload import vstore
 
 
 class DDGInput(BaseModel):
@@ -25,17 +29,22 @@ class PythonREPLInput(BaseModel):
     query: str = Field(description="python command to run")
 
 
-RETRIEVER_DESCRIPTION = """Can be used to look up information that was uploaded to this assistant.
-If the user is referencing particular files, that is often a good hint that information may be here. Use it whenever the user is asking you to use uploaded information."""
+RETRIEVAL_DESCRIPTION = """Can be used to look up information that was uploaded to this assistant.
+If the user is referencing particular files, that is often a good hint that information may be here.
+If the user asks a vague question, they are likely meaning to look up info from this retriever, and you should call it!"""
 
 
-def get_retrieval_tool(assistant_id: str):
+def get_retriever(assistant_id: str):
+    return vstore.as_retriever(
+        search_kwargs={"filter": RedisFilter.tag("namespace") == assistant_id}
+    )
+
+
+def get_retrieval_tool(assistant_id: str, description: str):
     return create_retriever_tool(
-        vstore.as_retriever(
-            search_kwargs={"filter": RedisFilter.tag("namespace") == assistant_id}
-        ),
+        get_retriever(assistant_id),
         "Retriever",
-        RETRIEVER_DESCRIPTION,
+        description,
     )
 
 

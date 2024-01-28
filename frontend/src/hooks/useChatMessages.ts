@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Message } from "./useChatList";
 import { StreamState } from "./useStreamState";
 import { API_BASE_URL } from "../utils/config";
@@ -50,7 +50,11 @@ export function useChatMessages(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stream?.status]);
 
-  return stream?.merge
-    ? [...(messages ?? []), ...(stream.messages ?? [])]
-    : stream?.messages ?? messages;
+  return useMemo(
+    () =>
+      stream?.merge
+        ? [...(messages ?? []), ...(stream.messages ?? [])]
+        : stream?.messages ?? messages,
+    [messages, stream?.merge, stream?.messages]
+  );
 }

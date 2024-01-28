@@ -3,12 +3,14 @@ import { useCallback, useMemo, useState } from "react";
 import { Chat } from "./components/Chat";
 import { ChatList } from "./components/ChatList";
 import { Layout } from "./components/Layout";
+import { NewGPT } from "./components/NewGPT";
 import { Chat as ChatType, useChatList } from "./hooks/useChatList";
 import { Config, useConfigList } from "./hooks/useConfigList";
 import { useSchemas } from "./hooks/useSchemas";
 import { useStreamState } from "./hooks/useStreamState";
 import { API_BASE_URL } from "./utils/config";
-import { NewGPT } from "./components/NewGPT";
+import { NewChat } from "./components/NewChat";
+import { noop } from "lodash";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -30,16 +32,14 @@ function App() {
       )?.config;
       if (!config) return;
       await startStream(
-        {
-          messages: [
-            {
-              content: message,
-              additional_kwargs: {},
-              type: "human",
-              example: false,
-            },
-          ],
-        },
+        [
+          {
+            content: message,
+            additional_kwargs: {},
+            type: "human",
+            example: false,
+          },
+        ],
         chat.assistant_id,
         chat.thread_id
       );
@@ -54,11 +54,23 @@ function App() {
         stopStream?.(true);
       }
       enterChat(id);
+      if (!id) {
+        enterConfig(configs?.[0]?.assistant_id ?? null);
+        window.scrollTo({ top: 0 });
+      }
       if (sidebarOpen) {
         setSidebarOpen(false);
       }
     },
-    [enterChat, stopStream, sidebarOpen, currentChat]
+    [enterChat, stopStream, sidebarOpen, currentChat, enterConfig, configs]
+  );
+
+  const selectConfig = useCallback(
+    (id: string | null) => {
+      enterConfig(id);
+      enterChat(null);
+    },
+    [enterConfig, enterChat]
   );
   console.log("API URL:", API_BASE_URL);
   console.log("currentChat:", currentChat);
@@ -74,15 +86,24 @@ function App() {
     />
   ) : currentConfig !== null ? (
     // Create new chat
-    <Chat
-      createChat={(message, assistantId) => createChat(message, assistantId)}
-      assistantId={currentConfig.assistant_id}
-      threadId={null}
-      startStream={startTurn}
-      stopStream={stopStream}
-      stream={stream}
+    <NewChat
+      startChat={noop}
+      configSchema={configSchema}
+      configDefaults={null}
+      configs={configs}
+      currentConfig={currentConfig}
+      saveConfig={noop}
+      enterConfig={selectConfig}
     />
   ) : (
+    // <Chat
+    //   createChat={(message, assistantId) => createChat(message, assistantId)}
+    //   assistantId={currentConfig.assistant_id}
+    //   threadId={null}
+    //   startStream={startTurn}
+    //   stopStream={stopStream}
+    //   stream={stream}
+    // />
     <NewGPT />
   );
 
@@ -110,8 +131,7 @@ function App() {
             <InformationCircleIcon
               className="h-5 w-5 cursor-pointer text-indigo-600"
               onClick={() => {
-                enterChat(null);
-                enterConfig(currentChatConfig.assistant_id);
+                selectConfig(currentChatConfig.assistant_id);
               }}
             />
           </span>
@@ -137,6 +157,8 @@ function App() {
           }, [chats, currentConfig])}
           currentChat={currentChat}
           enterChat={selectChat}
+          currentConfig={currentConfig}
+          enterConfig={selectConfig}
         />
       }
     >
