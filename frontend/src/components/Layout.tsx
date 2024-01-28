@@ -102,16 +102,9 @@ export function Layout(props: {
           <span className="sr-only">Open sidebar</span>
           <Bars3Icon className="h-6 w-6" aria-hidden="true" />
         </button>
-        <div className="flex-1 text-sm font-semibold leading-6 text-gray-900 lg:pl-72">
+        <div className="flex-1 flex text-sm font-semibold leading-6 text-gray-900 lg:pl-72">
           <GPTSelector gpts={props.gpts} onSelect={props.onSelectGPT} />
-          {/* {props.subtitle ? (
-            <>
-              Kirchner Robert GPT-Builder:{" "}
-              <span className="font-normal">{props.subtitle}</span>
-            </>
-          ) : (
-            "Kirchner Robert GPT-Builder"
-          )} */}
+          <div className="ml-5">Kirchner Robert GPT-Builder</div>
         </div>
         <div className="inline-flex items-center rounded-md bg-pink-100 px-2 py-1 text-xs font-medium text-pink-700">
           This is a prototype version. Don't use with sensitive data.
