@@ -86,24 +86,24 @@ function App() {
     />
   ) : currentConfig !== null ? (
     // Create new chat
-    <NewChat
-      startChat={noop}
-      configSchema={configSchema}
-      configDefaults={null}
-      configs={configs}
-      currentConfig={currentConfig}
-      saveConfig={noop}
-      enterConfig={selectConfig}
+    // <NewChat
+    //   startChat={noop}
+    //   configSchema={configSchema}
+    //   configDefaults={null}
+    //   configs={configs}
+    //   currentConfig={currentConfig}
+    //   saveConfig={noop}
+    //   enterConfig={selectConfig}
+    // />
+    <Chat
+      createChat={(message, assistantId) => createChat(message, assistantId)}
+      assistantId={currentConfig.assistant_id}
+      threadId={null}
+      startStream={startTurn}
+      stopStream={stopStream}
+      stream={stream}
     />
   ) : (
-    // <Chat
-    //   createChat={(message, assistantId) => createChat(message, assistantId)}
-    //   assistantId={currentConfig.assistant_id}
-    //   threadId={null}
-    //   startStream={startTurn}
-    //   stopStream={stopStream}
-    //   stream={stream}
-    // />
     <NewGPT />
   );
 
