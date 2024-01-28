@@ -1,7 +1,7 @@
 import os
 
 from agent_executor.upload import IngestRunnable
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import AzureOpenAIEmbeddings
 from langchain.schema.runnable import ConfigurableField
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores.redis import Redis
@@ -13,7 +13,7 @@ index_schema = {
 vstore = Redis(
     redis_url=os.environ["REDIS_URL"],
     index_name="opengpts",
-    embedding=OpenAIEmbeddings(),
+    embedding=AzureOpenAIEmbeddings(),
     index_schema=index_schema,
 )
 
