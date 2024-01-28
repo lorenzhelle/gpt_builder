@@ -105,11 +105,14 @@ export function useConfigList(): ConfigListProps {
           },
           credentials: "include",
         }).then((r) => r.json()),
+
         files.length
           ? fetch(`/ingest`, {
               method: "POST",
               body: formData,
               credentials: "include",
+            }).then((r) => {
+              if (!r.ok) throw new Error(`Error with file upload ${r.status}`);
             })
           : Promise.resolve(),
       ]);

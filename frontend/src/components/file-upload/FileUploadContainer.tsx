@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { FileUploadDropzone } from "./FileUpload";
+import React, { useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import { FileUploadDropzone } from "./FileUpload";
 
-interface Props {}
+interface Props {
+  readonly files: File[];
+  readonly setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+}
 
-export const FileUploadContainer: React.FC<Props> = () => {
-  const [files, setFiles] = useState<File[]>([]);
+export const FileUploadContainer: React.FC<Props> = ({ files, setFiles }) => {
   const dropzone = useDropzone({
     multiple: true,
     accept: {
@@ -25,7 +27,8 @@ export const FileUploadContainer: React.FC<Props> = () => {
         ...dropzone.acceptedFiles,
       ]);
     }
-  }, [dropzone.acceptedFiles]);
+  }, [dropzone.acceptedFiles, setFiles]);
+
   return (
     <FileUploadDropzone state={dropzone} files={files} setFiles={setFiles} />
   );

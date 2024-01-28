@@ -5,6 +5,8 @@ import { NavbarComponent } from "../components/NavBar";
 import { FileUploadContainer } from "../components/file-upload/FileUploadContainer";
 import { useConfigList } from "../hooks/useConfigList";
 import { useSchemas } from "../hooks/useSchemas";
+import { Alert } from "flowbite-react";
+import { HiInformationCircle } from "react-icons/hi";
 
 interface Props {}
 
@@ -18,6 +20,9 @@ export const GPTEditor: React.FC<Props> = () => {
   const navigate = useNavigate();
   const { configDefaults } = useSchemas();
   const { saveConfig } = useConfigList();
+
+  const [files, setFiles] = useState<File[]>([]);
+  const [error, setError] = useState<string | null>(null); // New state for error handling
 
   const [formValues, setFormValues] = useState<FormValues>({
     name: "",
@@ -36,18 +41,26 @@ export const GPTEditor: React.FC<Props> = () => {
       return;
     }
 
+    const haveFiles = files.length > 0;
+
     // adjust config
     const config = {
       ...configDefaults,
       configurable: {
         ...configDefaults.configurable,
         "type==agent/system_message": formValues.instruction,
+        tools: haveFiles ? ["Retrieval"] : [], // use only retrieval tool for now
       },
     };
 
-    saveConfig(formValues.name, config, [], false).then((res) => {
-      console.log("saveConfig:", res);
-    });
+    saveConfig(formValues.name, config, files, false)
+      .then(() => {
+        goBack();
+      })
+      .catch((err) => {
+        console.log(err);
+        setError("Failed to save config."); // Set error message
+      });
   };
 
   return (
@@ -106,7 +119,6 @@ export const GPTEditor: React.FC<Props> = () => {
                 placeholder="Add a short description about what this GPT does."
               ></textarea>
             </div>
-
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
@@ -129,7 +141,19 @@ export const GPTEditor: React.FC<Props> = () => {
               ></textarea>
             </div>
             {/* More input fields here */}
-            <KnowledgeUpload />
+            <div className="mb-2">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="instruction"
+              >
+                Knowledge
+              </label>
+              <p className="text-sm text-gray-600">
+                If you upload files under Knowledge, conversations with your GPT
+                may include file contents.
+              </p>
+              <FileUploadContainer files={files} setFiles={setFiles} />
+            </div>
             <div className="flex items-center justify-between">
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white disabled:bg-slate-400 disabled:cursor-not-allowed font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -140,6 +164,7 @@ export const GPTEditor: React.FC<Props> = () => {
                 Create GPT
               </button>
             </div>
+            {error && <ErrorAlert />} {/* Display error message if error */}
           </form>
         </div>
       </div>
@@ -147,20 +172,11 @@ export const GPTEditor: React.FC<Props> = () => {
   );
 };
 
-const KnowledgeUpload = () => {
+function ErrorAlert() {
   return (
-    <div className="mb-2">
-      <label
-        className="block text-gray-700 text-sm font-bold mb-2"
-        htmlFor="instruction"
-      >
-        Knowledge
-      </label>
-      <p className="text-sm text-gray-600">
-        If you upload files under Knowledge, conversations with your GPT may
-        include file contents.
-      </p>
-      <FileUploadContainer />
-    </div>
+    <Alert color="failure" className="mt-3" icon={HiInformationCircle}>
+      <span className="font-medium">Error at Creating GPT!</span> There was an
+      error at creating GPT, files could not be saved.
+    </Alert>
   );
-};
+}
