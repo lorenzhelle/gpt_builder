@@ -104,7 +104,7 @@ export function Layout(props: {
         </button>
         <div className="flex-1 flex text-sm font-semibold leading-6 text-gray-900 lg:pl-72">
           <GPTSelector gpts={props.gpts} onSelect={props.onSelectGPT} />
-          <div className="ml-5">Kirchner Robert GPT-Builder</div>
+          <div className="ml-5">K + R GPT-Builder</div>
         </div>
         <div className="inline-flex items-center rounded-md bg-pink-100 px-2 py-1 text-xs font-medium text-pink-700">
           This is a prototype version. Don't use with sensitive data.
