@@ -70,7 +70,7 @@ def get_assistant(user_id: str, assistant_id: str) -> Assistant | None:
 
 
 def list_public_assistants(
-    assistant_ids: Sequence[str]
+    assistant_ids: Sequence[str],
 ) -> List[AssistantWithoutUserId]:
     """List all the public assistants."""
     if not assistant_ids:
@@ -153,7 +153,7 @@ MESSAGES_CHANNEL_NAME = "__root__"
 def get_thread_messages(user_id: str, thread_id: str):
     """Get all messages for a thread."""
     config = {"configurable": {"user_id": user_id, "thread_id": thread_id}}
-    app = get_agent_executor([], AgentType.GPT_35_TURBO, "")
+    app = get_agent_executor([], AgentType.AZURE_OPENAI, "")
     checkpoint = app.checkpointer.get(config) or empty_checkpoint()
     with ChannelsManager(app.channels, checkpoint) as channels:
         return {
@@ -166,7 +166,7 @@ def get_thread_messages(user_id: str, thread_id: str):
 def post_thread_messages(user_id: str, thread_id: str, messages: Sequence[AnyMessage]):
     """Add messages to a thread."""
     config = {"configurable": {"user_id": user_id, "thread_id": thread_id}}
-    app = get_agent_executor([], AgentType.GPT_35_TURBO, "")
+    app = get_agent_executor([], AgentType.AZURE_OPENAI, "")
     checkpoint = app.checkpointer.get(config) or empty_checkpoint()
     with ChannelsManager(app.channels, checkpoint) as channels:
         channel = channels[MESSAGES_CHANNEL_NAME]

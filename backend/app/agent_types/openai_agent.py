@@ -28,8 +28,6 @@ def get_openai_agent_executor(
         llm_with_tools = llm
     agent = _get_messages | llm_with_tools
 
-    print("agent", agent)
-    print("system_message", system_message)
     tool_executor = ToolExecutor(tools)
 
     # Define the function that determines whether to continue or not
