@@ -1,2 +1,4 @@
+*.env
 .env.gcp.yaml
 .env
+redis-volume/

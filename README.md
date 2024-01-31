@@ -52,7 +52,7 @@ docker exec -it redis-stack-server redis-cli
 
 **Set up persistence layer**
 
-The backed by default uses Redis for saving agent configurations and chat message history.
+The backend by default uses Redis for saving agent configurations and chat message history.
 In order to you use this, you need to a `REDIS_URL` variable.
 
 ```shell
@@ -81,6 +81,7 @@ Other language models can be used, and in order to use them you will need to set
 See the section below on `LLMs` for how to configure Azure OpenAI, Anthropic, and Amazon Bedrock.
 
 **Set up tools**
+
 By default this uses a lot of tools.
 Some of these require additional environment variables.
 You do not need to use any of these tools, and the environment variables are not required to spin up the app
@@ -218,7 +219,7 @@ You can choose between different LLMs to use.
 This takes advantage of LangChain's many integrations.
 It is important to note that depending on which LLM you use, you may need to change how you are prompting it.
 
-We have expose four agent types by default:
+We have exposed four agent types by default:
 
 - "GPT 3.5 Turbo"
 - "GPT 4"
@@ -356,5 +357,5 @@ You can deploy to GCP Cloud Run using the following command:
 First create a `.env.gcp.yaml` file with the contents from `.env.gcp.yaml.example` and fill in the values. Then run:
 
 ```shell
-gcloud run deploy opengpts --source . --port 8001 --env-vars-file .env.gcp.yaml --allow-unauthenticated --region us-central1 --min-instances 1
+gcloud run deploy opengpts --source . --port 8000 --env-vars-file .env.gcp.yaml --allow-unauthenticated --region us-central1 --min-instances 1
 ```

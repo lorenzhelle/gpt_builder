@@ -21,6 +21,8 @@ export const GPTEditor: React.FC<Props> = () => {
   const { configDefaults } = useSchemas();
   const { saveConfig } = useConfigList();
 
+  console.log("configDefaults:", configDefaults);
+
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null); // New state for error handling
   const [isLoading, setisLoading] = useState(false);
@@ -43,6 +45,8 @@ export const GPTEditor: React.FC<Props> = () => {
       return;
     }
 
+    console.log(configDefaults);
+
     const haveFiles = files.length > 0;
 
     // adjust config
@@ -50,8 +54,10 @@ export const GPTEditor: React.FC<Props> = () => {
       ...configDefaults,
       configurable: {
         ...configDefaults.configurable,
-        "type==agent/system_message": formValues.instruction,
-        tools: haveFiles ? ["Retrieval"] : [], // use only retrieval tool for now
+        "type==assistant/system_message": formValues.instruction,
+        "type==chatbot/system_message": formValues.instruction,
+        "type==chat_retrieval/system_message": formValues.instruction,
+        "type==assistant/tools": haveFiles ? ["Retrieval"] : [], // use only retrieval tool for now
       },
     };
 

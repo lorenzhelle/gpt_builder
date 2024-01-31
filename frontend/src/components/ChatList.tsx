@@ -1,27 +1,30 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 import { ChatListProps } from "../hooks/useChatList";
+import { ConfigListProps } from "../hooks/useConfigList";
 import { cn } from "../utils/cn";
 
 export function ChatList(props: {
   chats: ChatListProps["chats"];
   currentChat: ChatListProps["currentChat"];
   enterChat: ChatListProps["enterChat"];
+  currentConfig: ConfigListProps["currentConfig"];
+  enterConfig: ConfigListProps["enterConfig"];
 }) {
   return (
     <>
       <div
         onClick={() => props.enterChat(null)}
         className={cn(
-          props.currentChat === null
+          props.currentChat === null && props.currentConfig !== null
             ? "bg-gray-50 text-indigo-600"
             : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
-          "group flex gap-x-3 rounded-md -mx-2 p-2 text-sm leading-6 font-semibold cursor-pointer"
+          "group flex gap-x-3 rounded-md -mx-2 p-2 leading-6 font-semibold cursor-pointer"
         )}
       >
         <span
           className={cn(
-            props.currentChat === null
+            props.currentChat === null && props.currentConfig !== null
               ? "text-indigo-600 border-indigo-600"
               : "text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600",
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
@@ -44,7 +47,7 @@ export function ChatList(props: {
                 chat === props.currentChat
                   ? "bg-gray-50 text-indigo-600"
                   : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
-                "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold cursor-pointer"
+                "group flex gap-x-3 rounded-md p-2 leading-6 cursor-pointer"
               )}
             >
               <span

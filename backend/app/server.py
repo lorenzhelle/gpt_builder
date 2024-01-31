@@ -4,13 +4,13 @@ from fastapi.responses import HTMLResponse
 import orjson
 from fastapi import FastAPI, Form, HTTPException, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
-from gizmo_agent import ingest_runnable
 from dotenv import load_dotenv
 
 from fastapi.middleware.cors import CORSMiddleware
 
 
 from app.api import router as api_router
+from app.upload import ingest_runnable
 
 app = FastAPI(title="KirchnerRobertGPTs API")
 

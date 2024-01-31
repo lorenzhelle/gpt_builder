@@ -8,6 +8,7 @@ export interface Config {
   updated_at: string;
   config: {
     configurable?: {
+      tools?: string[];
       [key: string]: unknown;
     };
   };
@@ -79,6 +80,11 @@ export function useConfigList(): ConfigListProps {
     fetchConfigs();
   }, []);
 
+  const enterConfig = useCallback((key: string | null) => {
+    setCurrent(key);
+    window.scrollTo({ top: 0 });
+  }, []);
+
   const saveConfig = useCallback(
     async (
       name: string,
@@ -117,15 +123,10 @@ export function useConfigList(): ConfigListProps {
           : Promise.resolve(),
       ]);
       setConfigs({ ...saved, mine: true });
-      setCurrent(saved.assistant_id);
+      enterConfig(saved.assistant_id);
     },
-    []
+    [enterConfig]
   );
-
-  const enterConfig = useCallback((key: string | null) => {
-    console.log("enterConfig", key);
-    setCurrent(key);
-  }, []);
 
   return {
     configs,
