@@ -109,7 +109,7 @@ index_schema = {
 vstore = Redis(
     redis_url=os.environ["REDIS_URL"],
     index_name="opengpts",
-    embedding=AzureOpenAIEmbeddings(),
+    embedding=AzureOpenAIEmbeddings(azure_deployment="embedding"),
     index_schema=index_schema,
 )
 
