@@ -19,7 +19,7 @@ export const Tools: React.FC<Props> = ({
   selectedTools,
 }) => {
   useEffect(() => {
-    if (files.length > 0) {
+    if (files.length > 0 && !selectedTools.includes("Retrieval")) {
       selectTool("Retrieval");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
