@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { Chat as ChatType } from "../hooks/useChatList";
 import { useChatMessages } from "../hooks/useChatMessages";
 import { StreamStateProps } from "../hooks/useStreamState";
@@ -12,13 +11,13 @@ interface ChatProps extends Pick<StreamStateProps, "stream" | "stopStream"> {
   createChat: (message: string, assistantId: string) => Promise<ChatType>;
 }
 
-function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T>();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
+// function usePrevious<T>(value: T): T | undefined {
+//   const ref = useRef<T>();
+//   useEffect(() => {
+//     ref.current = value;
+//   });
+//   return ref.current;
+// }
 
 export function Chat(props: ChatProps) {
   const messages = useChatMessages(props.threadId, props.stream);

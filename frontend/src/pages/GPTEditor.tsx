@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { HiOutlineArrowLeft } from "react-icons/hi";
+import { Button, Tabs, TabsRef } from "flowbite-react";
+import React, { useEffect, useRef, useState } from "react";
+import { HiOutlineArrowLeft, HiUserCircle } from "react-icons/hi";
+import { MdDashboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { NavbarComponent } from "../components/NavBar";
-import { FileUploadContainer } from "../components/file-upload/FileUploadContainer";
+import { Tools } from "../components/Tools";
 import { useConfigList } from "../hooks/useConfigList";
 import { useSchemas } from "../hooks/useSchemas";
-import { Alert, Button } from "flowbite-react";
-import { HiInformationCircle } from "react-icons/hi";
-
-interface Props {}
+import { FormComponent } from "./gpt_editor/Form";
 
 interface FormValues {
   name: string;
@@ -18,14 +17,17 @@ interface FormValues {
 
 export const GPTEditor: React.FC<Props> = () => {
   const navigate = useNavigate();
-  const { configDefaults } = useSchemas();
+  const { configDefaults, configSchema } = useSchemas();
   const { saveConfig } = useConfigList();
 
-  console.log("configDefaults:", configDefaults);
+  const availableTools =
+    configSchema?.properties?.configurable.properties["type==assistant/tools"]
+      .items?.enum;
 
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null); // New state for error handling
   const [isLoading, setisLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
   const [formValues, setFormValues] = useState<FormValues>({
     name: "",
@@ -33,21 +35,30 @@ export const GPTEditor: React.FC<Props> = () => {
     instruction: "",
   });
 
+  const [selectedTools, setSelectedTools] = useState<string[]>([]);
+
+  const selectTool = (tool: string) => {
+    if (selectedTools.includes(tool)) {
+      setSelectedTools(selectedTools.filter((t) => t !== tool));
+    } else {
+      setSelectedTools([...selectedTools, tool]);
+    }
+  };
+
   const goBack = () => {
     navigate(-1);
   };
 
-  const createGPT = async () => {
-    console.log("createGPT");
-    setisLoading(true);
-    if (configDefaults == null) {
-      console.log("configDefaults is null");
+  const handleClick = async () => {
+    if (activeTab === 0) {
+      setActiveTab(1);
       return;
     }
 
-    console.log(configDefaults);
-
-    const haveFiles = files.length > 0;
+    setisLoading(true);
+    if (configDefaults == null) {
+      return;
+    }
 
     // adjust config
     const config = {
@@ -57,14 +68,14 @@ export const GPTEditor: React.FC<Props> = () => {
         "type==assistant/system_message": formValues.instruction,
         "type==chatbot/system_message": formValues.instruction,
         "type==chat_retrieval/system_message": formValues.instruction,
-        "type==assistant/tools": haveFiles ? ["Retrieval"] : [], // use only retrieval tool for now
+        "type==assistant/tools": selectedTools, // use only retrieval tool for now
       },
     };
 
     saveConfig(formValues.name, config, files, false)
       .then(() => {
         setisLoading(false);
-        goBack();
+        navigate("/");
       })
       .catch((err) => {
         console.log(err);
@@ -82,114 +93,96 @@ export const GPTEditor: React.FC<Props> = () => {
           </div>
         }
       />
-      <div className="flex flex-1 justify-center items-center ">
-        <div className="bg-white p-8 rounded shadow-md w-full max-w-3xl">
-          <form>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="name"
-              >
-                Name
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="name"
-                type="text"
-                value={formValues.name}
-                onChange={(evt) =>
-                  setFormValues({
-                    ...formValues,
-                    name: evt.target.value,
-                  })
-                }
-                required
-                placeholder="Name your GPT"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="description"
-              >
-                Description
-              </label>
-              <textarea
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="description"
-                value={formValues.description}
-                onChange={(evt) =>
-                  setFormValues({
-                    ...formValues,
-                    description: evt.target.value,
-                  })
-                }
-                rows={5}
-                placeholder="Add a short description about what this GPT does."
-              ></textarea>
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="instruction"
-              >
-                Instructions
-              </label>
-              <textarea
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="instruction"
-                value={formValues.instruction}
-                onChange={(evt) =>
-                  setFormValues({
-                    ...formValues,
-                    instruction: evt.target.value,
-                  })
-                }
-                rows={5}
-                placeholder="What does this GPT do? How does it behave? What should it avoid doing?"
-              ></textarea>
-            </div>
-            {/* More input fields here */}
-            <div className="mb-2">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="instruction"
-              >
-                Knowledge
-              </label>
-              <p className="text-sm text-gray-600">
-                If you upload files under Knowledge, conversations with your GPT
-                may include file contents.
-              </p>
-              <FileUploadContainer files={files} setFiles={setFiles} />
-            </div>
-            <div className="flex items-center justify-between">
-              <Button
-                disabled={
-                  formValues.name == "" ||
-                  formValues.instruction == "" ||
-                  isLoading
-                }
-                color="blue"
-                isProcessing={isLoading}
-                onClick={createGPT}
-              >
-                Create GPT
-              </Button>
-            </div>
-            {error && <ErrorAlert />} {/* Display error message if error */}
-          </form>
-        </div>
+
+      <div className="flex m-auto justify-center items-center bg-white p-8 rounded shadow-md w-full max-w-3xl ">
+        <form className="w-full">
+          <TabsComponent
+            formValues={formValues}
+            setFormValues={setFormValues}
+            tools={availableTools || []}
+            files={files}
+            error={error}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            setFiles={setFiles}
+            selectTool={selectTool}
+            selectedTools={selectedTools}
+          />
+          <Button
+            disabled={
+              formValues.name == "" || formValues.instruction == "" || isLoading
+            }
+            color="blue"
+            isProcessing={isLoading}
+            onClick={handleClick}
+          >
+            {activeTab === 0 ? "Next" : "Save GPT"}
+          </Button>
+        </form>
       </div>
     </div>
   );
 };
 
-function ErrorAlert() {
-  return (
-    <Alert color="failure" className="mt-3" icon={HiInformationCircle}>
-      <span className="font-medium">Error at Creating GPT!</span> There was an
-      error at creating GPT, files could not be saved.
-    </Alert>
-  );
+interface Props {
+  tools: string[];
+  formValues: FormValues;
+  setFormValues: React.Dispatch<React.SetStateAction<FormValues>>;
+  files: File[];
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  activeTab: number;
+  setActiveTab: React.Dispatch<React.SetStateAction<number>>;
+  selectedTools: string[];
+  selectTool: (tool: string) => void;
+  error: string | null;
 }
+
+export const TabsComponent: React.FC<Props> = ({
+  tools,
+  formValues,
+  setFormValues,
+  files,
+  setActiveTab,
+  activeTab,
+  setFiles,
+  selectTool,
+  selectedTools,
+  error,
+}) => {
+  const tabsRef = useRef<TabsRef>(null);
+
+  useEffect(() => {
+    if (tabsRef.current) {
+      tabsRef.current.setActiveTab(activeTab);
+    }
+  }, [activeTab]);
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Tabs
+        aria-label="Default tabs"
+        style="default"
+        ref={tabsRef}
+        tabIndex={activeTab}
+        onActiveTabChange={(tab) => setActiveTab(tab)}
+      >
+        <Tabs.Item active title="General" icon={HiUserCircle}>
+          <FormComponent
+            formValues={formValues}
+            setFormValues={setFormValues}
+            error={error}
+          />
+        </Tabs.Item>
+        <Tabs.Item title="Tools" icon={MdDashboard}>
+          <Tools
+            selectTool={selectTool}
+            selectedTools={selectedTools}
+            files={files}
+            setFiles={setFiles}
+            tools={tools || []}
+          />
+        </Tabs.Item>
+      </Tabs>
+    </div>
+  );
+};

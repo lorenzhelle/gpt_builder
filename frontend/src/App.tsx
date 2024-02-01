@@ -8,9 +8,6 @@ import { Chat as ChatType, useChatList } from "./hooks/useChatList";
 import { Config, useConfigList } from "./hooks/useConfigList";
 import { useSchemas } from "./hooks/useSchemas";
 import { useStreamState } from "./hooks/useStreamState";
-import { API_BASE_URL } from "./utils/config";
-import { NewChat } from "./components/NewChat";
-import { noop } from "lodash";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,12 +17,8 @@ function App() {
   const { configs, enterConfig, currentConfig } = useConfigList();
   const { startStream, stopStream, stream } = useStreamState();
 
-  console.log("currentChat:", currentChat);
-  console.log("chats:", chats);
-
   const startTurn = useCallback(
     async (message: string, chat: ChatType | null = currentChat) => {
-      console.log("startTurn:", message, chat);
       if (!chat) return;
       const config = configs?.find(
         (c) => c.assistant_id === chat.assistant_id
@@ -49,7 +42,6 @@ function App() {
 
   const selectChat = useCallback(
     async (id: string | null) => {
-      console.log("selectChat:", id);
       if (currentChat) {
         stopStream?.(true);
       }
@@ -72,8 +64,6 @@ function App() {
     },
     [enterConfig, enterChat]
   );
-  console.log("API URL:", API_BASE_URL);
-  console.log("currentChat:", currentChat);
 
   const content = currentChat ? (
     <Chat
@@ -119,8 +109,6 @@ function App() {
       deselectChat();
     }
   };
-
-  console.log("currentChatConfig:", currentChatConfig);
 
   return (
     <Layout

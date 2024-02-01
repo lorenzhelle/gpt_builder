@@ -1,7 +1,8 @@
 import ReactDOM from "react-dom/client";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import "./index.css";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { ConfigPage } from "./pages/Config.tsx";
 import { GPTEditor } from "./pages/GPTEditor.tsx";
 
 if (document.cookie.indexOf("user_id") === -1) {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: "/editor",
     element: <GPTEditor />,
+  },
+  {
+    path: "/config",
+    element: <ConfigPage />,
   },
 ]);
 

@@ -112,7 +112,7 @@ class AvailableTools(str, Enum):
     # TAVILY_ANSWER = "Search (short answer, Tavily)"
     RETRIEVAL = "Retrieval"
     ARXIV = "Arxiv"
-    YOU_SEARCH = "You.com Search"
+    # YOU_SEARCH = "You.com Search"
     SEC_FILINGS = "SEC Filings (Kay.ai)"
     PRESS_RELEASES = "Press Releases (Kay.ai)"
     PUBMED = "PubMed"
