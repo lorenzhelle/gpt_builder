@@ -15,7 +15,7 @@ interface FormValues {
   instruction: string;
 }
 
-export const GPTEditor: React.FC<Props> = () => {
+export const GPTEditor: React.FC = () => {
   const navigate = useNavigate();
   const { configDefaults, configSchema } = useSchemas();
   const { saveConfig } = useConfigList();
@@ -124,7 +124,7 @@ export const GPTEditor: React.FC<Props> = () => {
   );
 };
 
-interface Props {
+interface TabsProps {
   tools: string[];
   formValues: FormValues;
   setFormValues: React.Dispatch<React.SetStateAction<FormValues>>;
@@ -137,7 +137,7 @@ interface Props {
   error: string | null;
 }
 
-export const TabsComponent: React.FC<Props> = ({
+export const TabsComponent: React.FC<TabsProps> = ({
   tools,
   formValues,
   setFormValues,

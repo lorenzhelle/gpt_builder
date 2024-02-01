@@ -276,9 +276,9 @@ function PublicToggle(props: {
   );
 }
 
-function fileId(file: File) {
-  return `${file.name}-${file.size}-${file.lastModified}`;
-}
+// function fileId(file: File) {
+//   return `${file.name}-${file.size}-${file.lastModified}`;
+// }
 
 const ORDER = [
   "system_message",
@@ -336,10 +336,10 @@ export function Config(props: {
           },
         };
       });
-      setFiles((files) => [
-        ...files.filter((f) => !acceptedFileIds.includes(fileId(f))),
-        ...dropzone.acceptedFiles,
-      ]);
+      // setFiles((files) => [
+      //   ...files.filter((f) => !acceptedFileIds.includes(fileId(f))),
+      //   ...dropzone.acceptedFiles,
+      // ]);
     }
   }, [dropzone.acceptedFiles]);
 
