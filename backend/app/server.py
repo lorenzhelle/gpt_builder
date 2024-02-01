@@ -4,7 +4,6 @@ from fastapi.responses import HTMLResponse
 import orjson
 from fastapi import FastAPI, Form, HTTPException, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
-from dotenv import load_dotenv
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,7 +19,7 @@ origins = [
 ]
 
 # Load environment variables from .env file
-load_dotenv()
+# load_dotenv()
 
 app.add_middleware(
     CORSMiddleware,
