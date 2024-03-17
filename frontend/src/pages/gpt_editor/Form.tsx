@@ -1,11 +1,7 @@
-import { Alert } from "flowbite-react";
-import { HiInformationCircle } from "react-icons/hi";
-
 // Form Component
 interface FormProps {
   formValues: FormValues;
-  setFormValues: React.Dispatch<React.SetStateAction<FormValues>>;
-  error: string | null;
+  setFormValues: (formValues: FormValues) => void;
 }
 
 interface FormValues {
@@ -17,7 +13,6 @@ interface FormValues {
 export const FormComponent: React.FC<FormProps> = ({
   formValues,
   setFormValues,
-  error,
 }) => {
   // Form component code here...
   return (
@@ -33,6 +28,7 @@ export const FormComponent: React.FC<FormProps> = ({
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="name"
           type="text"
+          disabled
           value={formValues.name}
           onChange={(evt) =>
             setFormValues({
@@ -86,16 +82,6 @@ export const FormComponent: React.FC<FormProps> = ({
           placeholder="What does this GPT do? How does it behave? What should it avoid doing?"
         ></textarea>
       </div>
-      {error && <ErrorAlert />} {/* Display error message if error */}
     </form>
   );
 };
-
-function ErrorAlert() {
-  return (
-    <Alert color="failure" className="mt-3" icon={HiInformationCircle}>
-      <span className="font-medium">Error at Creating GPT!</span> There was an
-      error at creating GPT, files could not be saved.
-    </Alert>
-  );
-}

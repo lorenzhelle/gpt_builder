@@ -23,7 +23,8 @@ export interface ConfigListProps {
     key: string,
     config: Config["config"],
     files: File[],
-    isPublic: boolean
+    isPublic: boolean,
+    assistant_id?: string
   ) => Promise<void>;
   enterConfig: (id: string | null) => void;
 }

@@ -1,8 +1,9 @@
-import { Dropdown } from "flowbite-react";
+import { Dropdown, Tooltip } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import { Config } from "../hooks/useConfigList";
+import { FaEdit } from "react-icons/fa";
 import { HiPlusCircle } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import { Config } from "../hooks/useConfigList";
 
 interface Props {
   readonly gpts: Config[];
@@ -27,8 +28,11 @@ export const GPTSelector: React.FC<Props> = ({ gpts, onSelect }) => {
   };
 
   const onGPTCreate = () => {
-    console.log("create gpt");
-    navgiate("/editor");
+    navgiate("/create");
+  };
+
+  const onGPTEdit = (gpt: Config) => {
+    navgiate(`/${gpt.assistant_id}/edit`);
   };
 
   const label = gpts[selectedGPTIndex]?.name ?? "Select GPT";
@@ -39,8 +43,12 @@ export const GPTSelector: React.FC<Props> = ({ gpts, onSelect }) => {
         <Dropdown.Item
           onClick={() => onGPTSelect(index, gpt)}
           key={gpt.assistant_id}
+          className="flex justify-between"
         >
-          {gpt.name}
+          <div>{gpt.name}</div>
+          <Tooltip content="edit" placement={"right-end"}>
+            <FaEdit onClick={() => onGPTEdit(gpt)} className="h-4 w-4 ml-2" />
+          </Tooltip>
         </Dropdown.Item>
       ))}
 
