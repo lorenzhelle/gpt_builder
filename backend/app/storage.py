@@ -67,9 +67,7 @@ def list_assistants(user_id: str) -> List[Assistant]:
             pipe.hmget(assistant_key(user_id, id), *assistant_hash_keys)
         assistants = pipe.execute()
 
-    assistants_result = [load(assistant_hash_keys, values) for values in assistants]
-
-    return assistants_result
+    return [load(assistant_hash_keys, values) for values in assistants]
 
 
 def get_assistant(user_id: str, assistant_id: str) -> Assistant | None:

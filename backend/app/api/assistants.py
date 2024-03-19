@@ -26,7 +26,7 @@ class AssistantPayload(BaseModel):
 AssistantID = Annotated[str, Path(description="The ID of the assistant.")]
 
 
-@router.get("/", response_model_exclude_none=True)
+@router.get("/")
 def list_assistants(opengpts_user_id: OpengptsUserId) -> List[AssistantWithoutUserId]:
     """List all assistants for the current user."""
     return storage.list_assistants(opengpts_user_id)
@@ -78,7 +78,6 @@ def upsert_assistant(
     aid: AssistantID,
     payload: AssistantPayload,
 ) -> Assistant:
-    print("payload", payload)
     """Create or update an assistant."""
     return storage.put_assistant(
         opengpts_user_id,

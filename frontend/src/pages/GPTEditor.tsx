@@ -23,11 +23,7 @@ interface FormValues {
   instruction: string;
 }
 
-interface Props {
-  assistantId: string | null;
-}
-
-export const GPTEditor: React.FC<Props> = () => {
+export const GPTEditor: React.FC = () => {
   const navigate = useNavigate();
   const params = useParams();
 

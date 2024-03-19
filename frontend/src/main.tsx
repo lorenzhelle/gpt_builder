@@ -18,11 +18,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/create",
-    element: <GPTEditor assistantId={null} />,
+    element: <GPTEditor />,
   },
   {
     path: "/:id/edit",
-    element: <GPTEditor assistantId={null} />,
+    element: <GPTEditor />,
   },
   {
     path: "/config",
