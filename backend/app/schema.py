@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import Cookie
 from typing_extensions import TypedDict
@@ -18,6 +18,8 @@ class AssistantWithoutUserId(TypedDict):
     """The last time the assistant was updated."""
     public: bool
     """Whether the assistant is public."""
+    description: Optional[str] = ""
+    """The assistant description."""
 
 
 class Assistant(AssistantWithoutUserId):

@@ -30,7 +30,14 @@ def thread_key(user_id: str, thread_id: str) -> str:
     return f"opengpts:{user_id}:thread:{thread_id}"
 
 
-assistant_hash_keys = ["assistant_id", "name", "config", "updated_at", "public"]
+assistant_hash_keys = [
+    "assistant_id",
+    "name",
+    "config",
+    "updated_at",
+    "public",
+    "description",
+]
 thread_hash_keys = ["assistant_id", "thread_id", "name", "updated_at"]
 public_user_id = "eef39817-c173-4eb6-8be4-f77cf37054fb"
 
@@ -59,7 +66,10 @@ def list_assistants(user_id: str) -> List[Assistant]:
         for id in ids:
             pipe.hmget(assistant_key(user_id, id), *assistant_hash_keys)
         assistants = pipe.execute()
-    return [load(assistant_hash_keys, values) for values in assistants]
+
+    assistants_result = [load(assistant_hash_keys, values) for values in assistants]
+
+    return assistants_result
 
 
 def get_assistant(user_id: str, assistant_id: str) -> Assistant | None:
@@ -91,11 +101,18 @@ def list_public_assistants(
         for id in ids:
             pipe.hmget(assistant_key(public_user_id, id), *assistant_hash_keys)
         assistants = pipe.execute()
+
     return [load(assistant_hash_keys, values) for values in assistants]
 
 
 def put_assistant(
-    user_id: str, assistant_id: str, *, name: str, config: dict, public: bool = False
+    user_id: str,
+    assistant_id: str,
+    *,
+    name: str,
+    config: dict,
+    public: bool = False,
+    description: str = "",
 ) -> Assistant:
     """Modify an assistant.
 
@@ -105,6 +122,7 @@ def put_assistant(
         name: The assistant name.
         config: The assistant config.
         public: Whether the assistant is public.
+        description: The assistant description.
 
     Returns:
         return the assistant model if no exception is raised.
@@ -116,6 +134,7 @@ def put_assistant(
         "config": config,
         "updated_at": datetime.utcnow(),
         "public": public,
+        "description": description,
     }
     client = _get_redis_client()
     with client.pipeline() as pipe:
@@ -126,6 +145,17 @@ def put_assistant(
             pipe.hset(assistant_key(public_user_id, assistant_id), mapping=_dump(saved))
         pipe.execute()
     return saved
+
+
+def delete_assistant(user_id: str, assistant_id: str):
+    """Delete an assistant."""
+    client = _get_redis_client()
+    with client.pipeline() as pipe:
+        pipe.srem(assistants_list_key(user_id), orjson.dumps(assistant_id))
+        pipe.delete(assistant_key(user_id, assistant_id))
+        pipe.execute()
+
+    return True
 
 
 def list_threads(user_id: str) -> List[ThreadWithoutUserId]:

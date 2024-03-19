@@ -4,7 +4,10 @@ import {
   HiInformationCircle,
   HiOutlineArrowLeft,
   HiUserCircle,
+  HiTrash,
 } from "react-icons/hi";
+import { BiSave } from "react-icons/bi";
+
 import { MdDashboard } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import { NavbarComponent } from "../components/NavBar";
@@ -12,6 +15,7 @@ import { Tools } from "../components/Tools";
 import { useConfigList } from "../hooks/useConfigList";
 import { useSchemas } from "../hooks/useSchemas";
 import { FormComponent } from "./gpt_editor/Form";
+import { ConfirmModal } from "../components/ConfirmModal";
 
 interface FormValues {
   name: string;
@@ -28,7 +32,7 @@ export const GPTEditor: React.FC<Props> = () => {
   const params = useParams();
 
   const { configDefaults, configSchema } = useSchemas();
-  const { saveConfig, configs } = useConfigList();
+  const { saveConfig, configs, deleteConfig } = useConfigList();
 
   const currentConfig = configs?.find(
     (config) => config.assistant_id == params.id
@@ -45,6 +49,7 @@ export const GPTEditor: React.FC<Props> = () => {
   const [isLoading, setisLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [isSaveChangesDisabled, setisSaveChangesDisabled] = useState(true);
+  const [isConfirmModalOpen, setisConfirmModalOpen] = useState(false);
 
   useEffect(() => {
     if (currentConfig) {
@@ -57,6 +62,7 @@ export const GPTEditor: React.FC<Props> = () => {
       setFormValues((prev) => ({
         ...prev,
         name: currentConfig.name,
+        description: currentConfig.description,
         instruction:
           (currentConfig.config.configurable?.[
             "type==assistant/system_message"
@@ -91,6 +97,15 @@ export const GPTEditor: React.FC<Props> = () => {
     setFormValues(values);
   };
 
+  const handleDelete = () => {
+    if (currentConfig == null) {
+      return;
+    }
+    deleteConfig(currentConfig?.assistant_id).then(() => {
+      navigate("/");
+    });
+  };
+
   const handleSaveChanges = () => {
     setisSaveChangesDisabled(true);
 
@@ -115,6 +130,7 @@ export const GPTEditor: React.FC<Props> = () => {
       config,
       files,
       true,
+      formValues.description,
       currentConfig?.assistant_id
     )
       .then(() => {
@@ -150,7 +166,7 @@ export const GPTEditor: React.FC<Props> = () => {
       },
     };
 
-    saveConfig(formValues.name, config, files, false)
+    saveConfig(formValues.name, config, files, false, formValues.description)
       .then(() => {
         setisLoading(false);
         navigate("/");
@@ -173,6 +189,17 @@ export const GPTEditor: React.FC<Props> = () => {
       />
       <div className="flex m-auto justify-center flex-col items-center bg-white p-8 rounded shadow-md w-full max-w-3xl ">
         <form className="w-full">
+          {isEdit && (
+            <div className="flex justify-end">
+              <Button
+                color="failure"
+                onClick={() => setisConfirmModalOpen(true)}
+              >
+                <HiTrash className="mr-2 h-5 w-5" />
+                Delete GPT
+              </Button>
+            </div>
+          )}
           <TabsComponent
             formValues={formValues}
             setFormValues={handleSetFormValues}
@@ -193,7 +220,6 @@ export const GPTEditor: React.FC<Props> = () => {
                   formValues.instruction == "" ||
                   isLoading
                 }
-                color="blue"
                 isProcessing={isLoading}
                 onClick={handleCreate}
               >
@@ -205,12 +231,19 @@ export const GPTEditor: React.FC<Props> = () => {
                 onClick={handleSaveChanges}
                 disabled={isSaveChangesDisabled}
               >
+                <BiSave className="mr-2 h-5 w-5" />
                 Save Changes
               </Button>
             )}
           </div>
         </form>
       </div>
+
+      <ConfirmModal
+        setOpenModal={setisConfirmModalOpen}
+        openModal={isConfirmModalOpen}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };

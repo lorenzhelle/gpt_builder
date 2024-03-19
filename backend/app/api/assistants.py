@@ -18,12 +18,15 @@ class AssistantPayload(BaseModel):
     name: str = Field(..., description="The name of the assistant.")
     config: dict = Field(..., description="The assistant config.")
     public: bool = Field(default=False, description="Whether the assistant is public.")
+    description: Optional[str] = Field(
+        default="", description="The assistant description."
+    )
 
 
 AssistantID = Annotated[str, Path(description="The ID of the assistant.")]
 
 
-@router.get("/")
+@router.get("/", response_model_exclude_none=True)
 def list_assistants(opengpts_user_id: OpengptsUserId) -> List[AssistantWithoutUserId]:
     """List all assistants for the current user."""
     return storage.list_assistants(opengpts_user_id)
@@ -65,6 +68,7 @@ def create_assistant(
         name=payload.name,
         config=payload.config,
         public=payload.public,
+        description=payload.description,
     )
 
 
@@ -74,6 +78,7 @@ def upsert_assistant(
     aid: AssistantID,
     payload: AssistantPayload,
 ) -> Assistant:
+    print("payload", payload)
     """Create or update an assistant."""
     return storage.put_assistant(
         opengpts_user_id,
@@ -81,4 +86,14 @@ def upsert_assistant(
         name=payload.name,
         config=payload.config,
         public=payload.public,
+        description=payload.description,
     )
+
+
+@router.delete("/{aid}")
+def delete_assistant(
+    opengpts_user_id: OpengptsUserId,
+    aid: AssistantID,
+) -> None:
+    """Delete an assistant."""
+    return storage.delete_assistant(opengpts_user_id, aid)

@@ -15,7 +15,7 @@ export const NewGPT: React.FC<Props> = () => {
         <p className="font-normal text-gray-700 dark:text-gray-400">
           In order to start a chat, you need to create your own GPT first.
         </p>
-        <Button onClick={() => navigate({ pathname: "/editor" })}>
+        <Button onClick={() => navigate({ pathname: "/create" })}>
           Create GPT
           <svg
             className="-mr-1 ml-2 h-4 w-4"
