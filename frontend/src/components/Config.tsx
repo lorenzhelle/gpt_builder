@@ -415,7 +415,7 @@ export function Config(props: {
           if (!key) return;
 
           setInflight(true);
-          await props.saveConfig(key, values!, files, isPublic);
+          await props.saveConfig(key, values!, files, isPublic, "");
           setInflight(false);
         }}
       >
