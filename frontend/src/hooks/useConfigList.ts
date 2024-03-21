@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import orderBy from "lodash/orderBy";
 import { API_BASE_URL } from "../utils/config";
+import useSWR from "swr";
+import { fetcher } from "../utils/fetcher";
 
 export interface Config {
   assistant_id: string;
@@ -20,6 +22,7 @@ export interface Config {
 export interface ConfigListProps {
   configs: Config[] | null;
   currentConfig: Config | null;
+  isLoading: boolean;
   saveConfig: (
     key: string,
     config: Config["config"],
@@ -51,38 +54,13 @@ export function useConfigList(): ConfigListProps {
   const [configs, setConfigs] = useReducer(configsReducer, null);
   const [current, setCurrent] = useState<string | null>(null);
 
+  const { data, isLoading } = useSWR(`${API_BASE_URL}/assistants/`, fetcher);
+
   useEffect(() => {
-    async function fetchConfigs() {
-      const searchParams = new URLSearchParams(window.location.search);
-      const shared_id = searchParams.get("shared_id");
-      const [myConfigs, publicConfigs] = await Promise.all([
-        fetch(`${API_BASE_URL}/assistants/`, {
-          headers: {
-            Accept: "application/json",
-          },
-          credentials: "include",
-        })
-          .then((r) => r.json())
-          .then((li) => li.map((c: Config) => ({ ...c, mine: true }))),
-
-        fetch(
-          `${API_BASE_URL}/assistants/public/` +
-            (shared_id ? `?shared_id=${shared_id}` : ""),
-          {
-            headers: {
-              Accept: "application/json",
-            },
-          }
-        ).then((r) => r.json()),
-      ]);
-      setConfigs(myConfigs.concat(publicConfigs));
-      if (publicConfigs.find((a: Config) => a.assistant_id === shared_id)) {
-        setCurrent(shared_id);
-      }
+    if (data) {
+      setConfigs(data);
     }
-
-    fetchConfigs();
-  }, []);
+  }, [data]);
 
   const enterConfig = useCallback((key: string | null) => {
     setCurrent(key);
@@ -155,5 +133,6 @@ export function useConfigList(): ConfigListProps {
     saveConfig,
     enterConfig,
     deleteConfig,
+    isLoading,
   };
 }
