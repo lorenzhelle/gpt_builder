@@ -5,9 +5,14 @@ import { FileUploadDropzone } from "./FileUpload";
 interface Props {
   readonly files: File[];
   readonly setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  readonly onDropAccepted: (files: File[]) => void;
 }
 
-export const FileUploadContainer: React.FC<Props> = ({ files, setFiles }) => {
+export const FileUploadContainer: React.FC<Props> = ({
+  files,
+  setFiles,
+  onDropAccepted,
+}) => {
   const dropzone = useDropzone({
     multiple: true,
     accept: {
@@ -18,6 +23,7 @@ export const FileUploadContainer: React.FC<Props> = ({ files, setFiles }) => {
       "application/msword": [".doc"],
     },
     maxSize: 10_000_000, // Up to 10 MB file size.
+    onDropAccepted,
   });
 
   useEffect(() => {

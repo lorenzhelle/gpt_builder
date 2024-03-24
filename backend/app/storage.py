@@ -18,6 +18,14 @@ def assistants_list_key(user_id: str) -> str:
     return f"opengpts:{user_id}:assistants"
 
 
+def docs_key(user_id: str) -> str:
+    return f"doc:opengpts:{user_id}:docs"
+
+
+def doc_key(doc_id: str) -> str:
+    return f"doc:opengpts:{doc_id}"
+
+
 def assistant_key(user_id: str, assistant_id: str) -> str:
     return f"opengpts:{user_id}:assistant:{assistant_id}"
 
@@ -38,6 +46,8 @@ assistant_hash_keys = [
     "public",
     "description",
 ]
+
+docs_hash_keys = ["namespace", "filename"]
 thread_hash_keys = ["assistant_id", "thread_id", "name", "updated_at"]
 public_user_id = "eef39817-c173-4eb6-8be4-f77cf37054fb"
 
@@ -77,6 +87,36 @@ def get_assistant(user_id: str, assistant_id: str) -> Assistant | None:
     return load(assistant_hash_keys, values) if any(values) else None
 
 
+def get_assistant_files(assistant_id: str) -> List[str]:
+    """Get all files associated with an assistant."""
+    client = _get_redis_client()
+    ids = [id.decode() for id in client.smembers(docs_key(assistant_id))]
+    with client.pipeline() as pipe:
+        for id in ids:
+            pipe.hmget(id, *docs_hash_keys)
+        docs = pipe.execute()
+
+    filenames = {doc[1].decode() for doc in docs}
+
+    return filenames
+
+
+def delete_assistant_file(assistant_id: str, filename: str) -> None:
+    """Delete a file associated with an assistant."""
+    client = _get_redis_client()
+    # get all doc ids associated with the assistant
+    doc_ids = [id.decode() for id in client.smembers(docs_key(assistant_id))]
+    print(doc_ids)
+    # get all doc ids that have the filename
+    doc_ids_for_filename = [
+        id for id in doc_ids if client.hmget(id, "filename")[0].decode() == filename
+    ]
+    # remove the doc ids from the assistant docs set
+    client.srem(docs_key(assistant_id), *doc_ids_for_filename)
+    # remove the docs
+    client.delete(*doc_ids_for_filename)
+
+
 def list_public_assistants(
     assistant_ids: Sequence[str],
 ) -> List[AssistantWithoutUserId]:
@@ -101,6 +141,12 @@ def list_public_assistants(
         assistants = pipe.execute()
 
     return [load(assistant_hash_keys, values) for values in assistants]
+
+
+def put_doc_id_to_assistant(doc_id: str, assistant_id: str) -> None:
+    """Save the doc ID to the assistant."""
+    client = _get_redis_client()
+    client.sadd(docs_key(assistant_id), doc_id)
 
 
 def put_assistant(

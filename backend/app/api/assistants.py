@@ -51,9 +51,28 @@ def get_asistant(
 ) -> Assistant:
     """Get an assistant by ID."""
     assistant = storage.get_assistant(opengpts_user_id, aid)
+
     if not assistant:
         raise HTTPException(status_code=404, detail="Assistant not found")
     return assistant
+
+
+@router.get("/{aid}/files")
+def get_assistant_files(
+    aid: AssistantID,
+) -> List[str]:
+    """Get all filenames associated with an assistant."""
+    files = storage.get_assistant_files(aid)
+    return files
+
+
+@router.delete("/{aid}/files/{filename}")
+def delete_assistant_file(
+    aid: AssistantID,
+    filename: str,
+) -> None:
+    """Delete a file associated with an assistant."""
+    return storage.delete_assistant_file(aid, filename)
 
 
 @router.post("")

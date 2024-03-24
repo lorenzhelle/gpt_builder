@@ -139,6 +139,10 @@ export const GPTEditor: React.FC = () => {
       });
   };
 
+  const handleOnDropAccepted = () => {
+    setisSaveChangesDisabled(false);
+  };
+
   const handleCreate = async () => {
     if (activeTab === 0) {
       setActiveTab(1);
@@ -206,6 +210,8 @@ export const GPTEditor: React.FC = () => {
             setFiles={setFiles}
             selectTool={selectTool}
             selectedTools={selectedTools}
+            assistantId={currentConfig?.assistant_id}
+            onDropAccepted={handleOnDropAccepted}
           />
           {error && <ErrorAlert />} {/* Display error message if error */}
           <div className="flex justify-between">
@@ -254,6 +260,8 @@ interface TabsProps {
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;
   selectedTools: string[];
   selectTool: (tool: string) => void;
+  onDropAccepted: (files: File[]) => void;
+  assistantId?: string;
 }
 
 export const TabsComponent: React.FC<TabsProps> = ({
@@ -266,6 +274,8 @@ export const TabsComponent: React.FC<TabsProps> = ({
   setFiles,
   selectTool,
   selectedTools,
+  assistantId,
+  onDropAccepted,
 }) => {
   const tabsRef = useRef<TabsRef>(null);
 
@@ -297,6 +307,8 @@ export const TabsComponent: React.FC<TabsProps> = ({
             files={files}
             setFiles={setFiles}
             tools={tools || []}
+            assistantId={assistantId}
+            onDropAccepted={onDropAccepted}
           />
         </Tabs.Item>
       </Tabs>

@@ -40,7 +40,7 @@ app.include_router(api_router)
 def ingest_files(files: list[UploadFile], config: str = Form(...)) -> None:
     """Ingest a list of files."""
     config = orjson.loads(config)
-    return ingest_runnable.batch([file.file for file in files], config)
+    return ingest_runnable.batch(files, config)
 
 
 app.mount("", StaticFiles(directory=str(ROOT / "ui"), html=True), name="ui")
