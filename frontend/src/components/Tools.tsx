@@ -2,6 +2,10 @@ import { Checkbox, Label } from "flowbite-react";
 import React, { useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { FileUploadContainer } from "./file-upload/FileUploadContainer";
+import useSWR from "swr";
+import { API_BASE_URL } from "../utils/config";
+import { fetcher } from "../utils/fetcher";
+import { useDeleteFile } from "../hooks/useFiles";
 
 interface Props {
   readonly tools: string[];
@@ -9,6 +13,8 @@ interface Props {
   readonly selectTool: (tool: string) => void;
   readonly files: File[];
   readonly setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  readonly onDropAccepted: (files: File[]) => void;
+  readonly assistantId?: string;
 }
 
 export const Tools: React.FC<Props> = ({
@@ -17,7 +23,20 @@ export const Tools: React.FC<Props> = ({
   setFiles,
   selectTool,
   selectedTools,
+  assistantId,
+  onDropAccepted,
 }) => {
+  const { data: filenames } = useSWR<string[] | undefined>(
+    `${API_BASE_URL}/assistants/${assistantId}/files`,
+    fetcher
+  );
+
+  const { trigger } = useDeleteFile(assistantId ?? "");
+
+  const deleteFile = (filename: string) => {
+    trigger(filename);
+  };
+
   useEffect(() => {
     if (files.length > 0 && !selectedTools.includes("Retrieval")) {
       selectTool("Retrieval");
@@ -53,7 +72,32 @@ export const Tools: React.FC<Props> = ({
           If you upload files under Knowledge, conversations with your GPT may
           include file contents.
         </p>
-        <FileUploadContainer files={files} setFiles={setFiles} />
+        {filenames !== undefined && filenames.length > 0 && (
+          <div className="flex flex-col gap-2 mt-2 mb-2">
+            <div className="block text-gray-700 text-sm font-bold mb-1">
+              Already Uploaded Files
+            </div>
+            <div className="flex flex-col gap-2">
+              {filenames.map((filename: string) => (
+                <div key={filename} className="flex gap-2">
+                  <div className="text-xs">{filename}</div>
+                  <button
+                    type="button"
+                    onClick={() => deleteFile(filename)}
+                    className="text-xs text-red-500"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <FileUploadContainer
+          files={files}
+          setFiles={setFiles}
+          onDropAccepted={onDropAccepted}
+        />
       </div>
     </div>
   );

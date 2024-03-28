@@ -44,7 +44,7 @@ function Label(props: { id: string; title: string }) {
 export function FileUploadDropzone(props: {
   state: DropzoneState;
   files: File[];
-  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  setFiles: (files: File[]) => void;
 }) {
   const { getRootProps, getInputProps, fileRejections } = props.state;
 
@@ -53,9 +53,7 @@ export function FileUploadDropzone(props: {
       {file.name} - {file.size} bytes
       <span
         className="not-prose ml-2  inline-flex items-center rounded-full px-1 py-1 text-xs font-medium cursor-pointer bg-gray-50 text-gray-600 relative top-[1px]"
-        onClick={() =>
-          props.setFiles((files) => files.filter((f) => f !== file))
-        }
+        onClick={() => props.setFiles(props.files.filter((f) => f !== file))}
       >
         <XCircleIcon className="h-4 w-4" />
       </span>

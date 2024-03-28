@@ -6,11 +6,13 @@ The details here might change in the future.
 
 For the time being, upload and ingestion are coupled
 """
+
 from __future__ import annotations
 
 import os
 from typing import Any, BinaryIO, List, Optional
 
+from fastapi import UploadFile
 from langchain.text_splitter import RecursiveCharacterTextSplitter, TextSplitter
 from langchain_community.document_loaders.blob_loaders import Blob
 from langchain_community.vectorstores.redis import Redis
@@ -81,7 +83,7 @@ class IngestRunnable(RunnableSerializable[BinaryIO, List[str]]):
 
     def batch(
         self,
-        inputs: List[BinaryIO],
+        inputs: List[UploadFile],
         config: RunnableConfig | List[RunnableConfig] | None = None,
         *,
         return_exceptions: bool = False,
@@ -90,7 +92,8 @@ class IngestRunnable(RunnableSerializable[BinaryIO, List[str]]):
         """Ingest a batch of files into the vectorstore."""
         ids = []
         for data in inputs:
-            blob = _convert_ingestion_input_to_blob(data)
+            print(data.filename)
+            blob = _convert_ingestion_input_to_blob(data.file)
             ids.extend(
                 ingest_blob(
                     blob,
@@ -98,6 +101,7 @@ class IngestRunnable(RunnableSerializable[BinaryIO, List[str]]):
                     self.text_splitter,
                     self.vectorstore,
                     self.namespace,
+                    filename=data.filename,
                 )
             )
         return ids
