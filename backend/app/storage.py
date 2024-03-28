@@ -106,7 +106,6 @@ def delete_assistant_file(assistant_id: str, filename: str) -> None:
     client = _get_redis_client()
     # get all doc ids associated with the assistant
     doc_ids = [id.decode() for id in client.smembers(docs_key(assistant_id))]
-    print(doc_ids)
     # get all doc ids that have the filename
     doc_ids_for_filename = [
         id for id in doc_ids if client.hmget(id, "filename")[0].decode() == filename
